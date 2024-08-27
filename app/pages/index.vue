@@ -16,12 +16,13 @@ const items = [[{
 
 const range = ref<Range>({ start: sub(new Date(), { days: 14 }), end: new Date() })
 const period = ref<Period>('daily')
+
 </script>
 
 <template>
   <UDashboardPage>
     <UDashboardPanel grow>
-      <UDashboardNavbar title="Home">
+      <UDashboardNavbar title="Dashboard">
         <template #right>
           <UTooltip
             text="Notifications"

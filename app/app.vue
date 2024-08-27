@@ -17,7 +17,7 @@ useHead({
   }
 })
 
-const title = 'Nuxt UI Pro - Dashboard template'
+const title = 'Police Health'
 const description = 'Nuxt UI Pro is a collection of premium Vue components built on top of Nuxt UI to create beautiful & responsive Nuxt applications in minutes.'
 
 useSeoMeta({
