@@ -3,5 +3,5 @@
 </script>
 
 <template>
-      <H1>User Management</H1>
+      <H1>Account Management</H1>
 </template>

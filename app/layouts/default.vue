@@ -25,7 +25,8 @@ const license = [
     id: "License Management",
     label: "License Management",
     icon: "mdi:license",
-    to: "/license",
+    defaultOpen: route.path.startsWith('/license'),
+    // to: "/license",
     children: [
       {
         label: "License Management",
@@ -49,16 +50,16 @@ const user = [
     id: "User Management",
     label: "User Management",
     icon: "material-symbols:account-circle-outline",
-    to: "/user",
+    // to: "/user",
     children: [
       {
         label: "Account",
-        to: "/account",
+        to: "user/account",
         exact: true,
       },
       {
         label: "User",
-        to: "/user",
+        to: "/user/user",
       },
       {
         label: "Group Permission",
@@ -74,7 +75,7 @@ const equipment = [
     id: "Health Equipment",
     label: "Health Equipment",
     icon: "healthicons:cardiogram-e-outline",
-    to: "/healthequipment",
+    // to: "/healthequipment",
     children: [
       {
         label: "Survey form",
@@ -156,7 +157,7 @@ const sensor = [
   {
     id: "Health Center ",
     label: "Health Center ",
-    to: "/",
+    // to: "/healthcenter",
     icon: "streamline:health-medical-heart-rate-health-beauty-information-data-beat-pulse-monitor-heart-rate-info",
     children: [
       {
@@ -221,7 +222,7 @@ const environment = [
     id: "Environment Center",
     label: "Environment Center",
     icon: "streamline:nature-ecology-leaf-environment-leaf-ecology-plant-plants-eco",
-    to: "/",
+    // to: "/",
     children: [
       {
         label: "Weather temperature",
@@ -237,7 +238,7 @@ const asset = [
     id: "Asset Inventory",
     label: "Asset Inventory",
     icon: "material-symbols:inventory",
-    to: "/",
+    // to: "/",
     children: [
       {
         label: "Dashboard Inventory",
@@ -268,7 +269,7 @@ const report = [
     id: "Report",
     label: "Report",
     icon: "lets-icons:arhive-alt-export-light",
-    to: "/",
+    // to: "/",
     children: [
       {
         label: "Organization Report",
@@ -294,7 +295,7 @@ const setting = [
     id: "Setting",
     label: "Setting",
     icon: "uil:setting",
-    to: "/",
+    // to: "/",
     children: [
       {
         label: "Organization Setting",  
@@ -375,25 +376,25 @@ const groups = [
           <!-- <UDashboardSearchButton /> -->
         </template>
 
-        <UDashboardSidebarLinks :links="dashboard" />
+        <UNavigationTree  :links="dashboard" class="fontdashboard"/>
         <UDivider />
-        <UDashboardSidebarLinks :links="organization" />
+        <UNavigationTree  :links="organization" class="fontdashboard"/>
         <UDivider />
-        <UDashboardSidebarLinks :links="license" />
+        <UNavigationTree  :links="license" default-open class="fontdashboard-color"/>
         <UDivider />
-        <UNavigationAccordion :links="user" />
+        <UNavigationTree  :links="user" default-open class="fontdashboard-color"/>
         <UDivider />
-        <UNavigationAccordion :links="equipment" />
+        <UNavigationTree  :links="equipment" default-open class="fontdashboard-color"/>
         <UDivider />
-        <UNavigationAccordion :links="sensor" />
+        <UNavigationTree  :links="sensor" default-open class="fontdashboard-color"/>
         <UDivider />
-        <UNavigationAccordion :links="environment" />
+        <UNavigationTree  :links="environment" default-open class="fontdashboard-color"/>
         <UDivider />
-        <UNavigationAccordion :links="asset" />
+        <UNavigationTree  :links="asset" default-open class="fontdashboard-color"/>
         <UDivider />
-        <UNavigationAccordion :links="report" />
+        <UNavigationTree  :links="report" default-open class="fontdashboard-color"/>
         <UDivider />
-        <UNavigationAccordion :links="setting" />
+        <UNavigationTree  :links="setting" default-open class="fontdashboard-color"/>
 
         <!-- <UDashboardSidebarLinks
           :links="[{ label: 'Colors', draggable: true, children: colors }]"
@@ -427,6 +428,14 @@ const groups = [
 </template>
 
 <style>
+.fontdashboard {
+  font-weight: bold;
+}
+
+.fontdashboard-color {
+  color: #767d8a;
+}
+
 .object-contain {
   object-fit: contain;
 }
