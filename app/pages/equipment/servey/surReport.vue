@@ -3,5 +3,5 @@
 </script>
 
 <template>
-      <H1>Weather Management</H1>
+      <H1>Survey Report</H1>
 </template>

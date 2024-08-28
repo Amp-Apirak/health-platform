@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const route = useRoute();
 
+// กำหนดโครงสร้างเมนูหลัก
+// แต่ละเมนูประกอบด้วย id, label, icon, และ to (ลิงก์ปลายทาง)
 
+// เมนูแดชบอร์ด
 const dashboard = [
   {
     id: "Dashboard",
@@ -11,6 +14,7 @@ const dashboard = [
   },
 ];
 
+// เมนูจัดการองค์กร
 const organization = [
   {
     id: "Organization Management",
@@ -20,41 +24,42 @@ const organization = [
   },
 ];
 
+// เมนูจัดการใบอนุญาต
 const license = [
   {
     id: "License Management",
     label: "License Management",
     icon: "mdi:license",
-    defaultOpen: route.path.startsWith('/license'),
-    // to: "/license",
+    to: "/license",
     children: [
       {
         label: "License Management",
-        to: "/license",
+        to: "/license/license",
         exact: true,
       },
       {
         label: "License Group",
-        to: "/licenseGroup",
+        to: "/license/licenseGroup",
       },
       {
         label: "License Report",
-        to: "/licenseReport",
+        to: "/license/licenseReport",
       },
     ],
   },
 ];
 
+// เมนูจัดการผู้ใช้
 const user = [
   {
     id: "User Management",
     label: "User Management",
     icon: "material-symbols:account-circle-outline",
-    // to: "/user",
+    to: "/user",
     children: [
       {
         label: "Account",
-        to: "user/account",
+        to: "/user/account",
         exact: true,
       },
       {
@@ -63,67 +68,67 @@ const user = [
       },
       {
         label: "Group Permission",
-        to: "/permission",
+        to: "/user/permission",
       },
     ],
   },
 ];
 
-
+// เมนูอุปกรณ์สุขภาพ
 const equipment = [
   {
     id: "Health Equipment",
     label: "Health Equipment",
     icon: "healthicons:cardiogram-e-outline",
-    // to: "/healthequipment",
+    to: "/healthequipment",
     children: [
       {
         label: "Survey form",
         children: [
           {
             label: "Dashboard Survey",
-            to: "/dashboardsurvey",
+            to: "/equipment/servey/surDash",
             exact: true,
           },
           {
             label: "Survey List",
-            to: "/surveylist",
+            to: "/equipment/servey/surList",
             exact: true,
           },
           {
             label: "Survey Management",
-            to: "/surveymanagement",
+            to: "/equipment/servey/surMng",
             exact: true,
           },
           {
             label: "Survey Report",
-            to: "/surveyreport",
+            to: "/equipment/servey/surReport",
             exact: true,
           },
         ],
       },
       {
         label: "Health Checkup",
-        to: "/health",
+        to: "/equipment/",
         children: [
           {
             label: "Health Dashboard",
-            to: "/healthdashboard",
+            to: "/equipment/",
             exact: true,
           },
           {
             label: "Health Monitoring",
-            to: "/healthmonitoring",
+            to: "/equipment/",
             exact: true,
           },
           {
             label: "Health Setting",
-            to: "/healthsetting",
+            to: "/equipment/",
             exact: true,
           },
           {
             label: "Checkup Report",
-            to: "/checkupreport",
+            to: "/equipment/",
             exact: true,
           },
         ],
@@ -134,17 +139,17 @@ const equipment = [
         children: [
           {
             label: "Urine test dashboard",
-            to: "/healthdashboard",
+            to: "/equipment/",
             exact: true,
           },
           {
             label: "Urine test monitoring",
-            to: "/healthmonitoring",
+            to: "/equipment/",
             exact: true,
           },
           {
             label: "Urine test settings",
-            to: "/healthsetting",
+            to: "/equipment/",
             exact: true,
           },
         ],
@@ -153,11 +158,12 @@ const equipment = [
   },
 ];
 
+// เมนูศูนย์สุขภาพ
 const sensor = [
   {
     id: "Health Center ",
     label: "Health Center ",
-    // to: "/healthcenter",
+    to: "/sensor",
     icon: "streamline:health-medical-heart-rate-health-beauty-information-data-beat-pulse-monitor-heart-rate-info",
     children: [
       {
@@ -217,28 +223,30 @@ const sensor = [
   },
 ];
 
+// เมนูศูนย์สิ่งแวดล้อม
 const environment = [
   {
     id: "Environment Center",
     label: "Environment Center",
     icon: "streamline:nature-ecology-leaf-environment-leaf-ecology-plant-plants-eco",
-    // to: "/",
+    to: "/environment",
     children: [
       {
         label: "Weather temperature",
-        to: "/weather",
+        to: "/environment/weather",
         exact: true,
       },
     ],
   },
 ];
 
+// เมนูสินทรัพย์
 const asset = [
   {
     id: "Asset Inventory",
     label: "Asset Inventory",
     icon: "material-symbols:inventory",
-    // to: "/",
+    to: "/asset",
     children: [
       {
         label: "Dashboard Inventory",
@@ -264,12 +272,13 @@ const asset = [
   },
 ];
 
+// เมนูรายงาน
 const report = [
   {
     id: "Report",
     label: "Report",
     icon: "lets-icons:arhive-alt-export-light",
-    // to: "/",
+    to: "/report",
     children: [
       {
         label: "Organization Report",
@@ -290,12 +299,13 @@ const report = [
   },
 ];
 
+// เมนูการตั้งค่า
 const setting = [
   {
     id: "Setting",
     label: "Setting",
     icon: "uil:setting",
-    // to: "/",
+    to: "/setting",
     children: [
       {
         label: "Organization Setting",  
@@ -318,8 +328,7 @@ const setting = [
   },
 ];
 
-
-// สร้าง `groups` ให้ใช้ตัวแปรที่ถูกต้อง
+// สร้างกลุ่มเมนูสำหรับการค้นหาและการนำทาง
 const groups = [
   {
     key: "links",
@@ -361,54 +370,39 @@ const groups = [
 <template>
   <UDashboardLayout>
     <UDashboardPanel :width="300" :resizable="{ min: 200, max: 400 }">
-      <!-- <UDashboardNavbar
-        class="!border-transparent"
-        :ui="{ left: 'flex-1' }"
-      >
-        <template #left>
-          <TeamsDropdown />
-        </template>
-      </UDashboardNavbar> -->
-
       <UDashboardSidebar>
+        <!-- ส่วนหัวของ sidebar -->
         <template #header>
           <img src="/images/logo.jpg" alt="Platform Logo" class="logo" />
-          <!-- <UDashboardSearchButton /> -->
         </template>
 
-        <UNavigationTree  :links="dashboard" class="fontdashboard"/>
+        <!-- แสดงเมนูต่างๆ โดยใช้ UNavigationTree -->
+        <UNavigationTree :links="dashboard" class="fontdashboard" />
         <UDivider />
-        <UNavigationTree  :links="organization" class="fontdashboard"/>
+        <UNavigationTree :links="organization" class="fontdashboard" />
         <UDivider />
-        <UNavigationTree  :links="license" default-open class="fontdashboard-color"/>
+        <UNavigationTree :links="license" default-open />
         <UDivider />
-        <UNavigationTree  :links="user" default-open class="fontdashboard-color"/>
+        <UNavigationTree :links="user" default-open />
         <UDivider />
-        <UNavigationTree  :links="equipment" default-open class="fontdashboard-color"/>
+        <UNavigationTree :links="equipment" default-open />
         <UDivider />
-        <UNavigationTree  :links="sensor" default-open class="fontdashboard-color"/>
+        <UNavigationTree :links="sensor" default-open />
         <UDivider />
-        <UNavigationTree  :links="environment" default-open class="fontdashboard-color"/>
+        <UNavigationTree :links="environment" default-open />
         <UDivider />
-        <UNavigationTree  :links="asset" default-open class="fontdashboard-color"/>
+        <UNavigationTree :links="asset" default-open />
         <UDivider />
-        <UNavigationTree  :links="report" default-open class="fontdashboard-color"/>
+        <UNavigationTree :links="report" default-open />
         <UDivider />
-        <UNavigationTree  :links="setting" default-open class="fontdashboard-color"/>
-
-        <!-- <UDashboardSidebarLinks
-          :links="[{ label: 'Colors', draggable: true, children: colors }]"
-          @update:links="colors => defaultColors = colors"
-        /> -->
+        <UNavigationTree :links="setting" default-open />
 
         <div class="flex-1" />
 
-        <!-- <UDashboardSidebarLinks :links="footerLinks" /> -->
-
         <UDivider class="sticky bottom-0" />
 
+        <!-- ส่วนท้ายของ sidebar -->
         <template #footer>
-          <!-- ~/components/UserDropdown.vue -->
           <UserDropdown />
         </template>
       </UDashboardSidebar>
@@ -416,11 +410,12 @@ const groups = [
 
     <slot />
 
-    <!-- ~/components/HelpSlideover.vue -->
+    <!-- คอมโพเนนต์สำหรับแสดงความช่วยเหลือ -->
     <HelpSlideover />
-    <!-- ~/components/NotificationsSlideover.vue -->
+    <!-- คอมโพเนนต์สำหรับแสดงการแจ้งเตือน -->
     <NotificationsSlideover />
 
+    <!-- คอมโพเนนต์สำหรับการค้นหา -->
     <ClientOnly>
       <LazyUDashboardSearch :groups="groups" />
     </ClientOnly>
@@ -428,35 +423,43 @@ const groups = [
 </template>
 
 <style>
+/* สไตล์สำหรับตัวอักษรหนาในแดชบอร์ด */
 .fontdashboard {
   font-weight: bold;
 }
 
+/* สไตล์สำหรับสีตัวอักษรในแดชบอร์ด */
 .fontdashboard-color {
   color: #767d8a;
 }
 
+/* สไตล์สำหรับการจัดการรูปภาพให้คงสัดส่วน */
 .object-contain {
   object-fit: contain;
 }
+
+/* สไตล์สำหรับโลโก้ */
 .logo {
   width: 100%;
-  max-width: 150px; /* Adjust max-width as needed */
+  max-width: 150px; /* ปรับขนาดสูงสุดตามต้องการ */
   height: auto;
-  margin: 0 auto; /* Center the logo if needed */
+  margin: 0 auto; /* จัดให้อยู่กึ่งกลาง */
 }
+
+/* สไตล์สำหรับส่วนหัว */
 .header {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* สไตล์สำหรับลิงก์ในแถบด้านข้างของแดชบอร์ด */
 .dashboard-sidebar-link-class {
-  font-size: 0.875rem; /* text-sm */
-  line-height: 1.5rem; /* /6 - คำนวณจาก 0.875rem * 1.5 = 1.3125rem ปัดขึ้นเป็น 1.5rem */
-  font-weight: 600; /* font-semibold */
-  overflow: hidden; /* truncate */
-  text-overflow: ellipsis; /* truncate */
-  white-space: nowrap; /* truncate */
+  font-size: 0.875rem; /* ขนาดตัวอักษร */
+  line-height: 1.5rem; /* ความสูงบรรทัด */
+  font-weight: 600; /* ความหนาของตัวอักษร */
+  overflow: hidden; /* ซ่อนข้อความที่เกินขอบเขต */
+  text-overflow: ellipsis; /* แสดงจุดไข่ปลาเมื่อข้อความเกิน */
+  white-space: nowrap; /* ไม่ขึ้นบรรทัดใหม่ */
 }
 </style>
