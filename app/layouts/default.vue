@@ -308,7 +308,7 @@ const setting = [
     to: "/setting",
     children: [
       {
-        label: "Organization Setting",  
+        label: "Organization Setting",
         to: "/running",
         children: [
           {
@@ -369,7 +369,11 @@ const groups = [
 
 <template>
   <UDashboardLayout>
-    <UDashboardPanel :width="300" :resizable="{ min: 200, max: 400 }">
+    <UDashboardPanel
+      :width="250"
+      :resizable="{ min: 200, max: 300 }"
+      collapsible
+    >
       <UDashboardSidebar>
         <!-- ส่วนหัวของ sidebar -->
         <template #header>
