@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
+
+// นำเข้า useBreakpoints เพื่อจัดการกับการเปลี่ยนแปลงขนาดหน้าจอ
 import { useBreakpoints } from "@vueuse/core";
 
+// ดึงข้อมูลเส้นทางปัจจุบัน
 const route = useRoute();
 const breakpoints = useBreakpoints({
   sm: 640,
@@ -10,7 +13,10 @@ const breakpoints = useBreakpoints({
   lg: 1024,
   xl: 1280,
 });
+
+// ตรวจสอบว่าหน้าจอมีขนาดใหญ่กว่าหรือเท่ากับ 'lg'
 const isLargeScreen = breakpoints.greater('lg')
+// สถานะเปิด/ปิดของแถบข้าง
 const isSidebarOpen = ref(isLargeScreen.value);
 
 const checkScreenSize = () => {
@@ -21,20 +27,26 @@ const checkScreenSize = () => {
   }
 };
 
+// ตรวจสอบขนาดหน้าจอเมื่อคอมโพเนนต์ถูกเมานต์
+// เพิ่ม event listener สำหรับการเปลี่ยนแปลงขนาดหน้าจอ
 onMounted(() => {
   checkScreenSize();
   window.addEventListener("resize", checkScreenSize);
 });
 
+// ลบ event listener เมื่อคอมโพเนนต์ถูก unmount
 onUnmounted(() => {
   window.removeEventListener("resize", checkScreenSize);
 });
 
+// สลับสถานะเปิด/ปิดของแถบข้าง
+// ปิดแถบข้างเมื่อเปลี่ยนเส้นทางในหน้าจอขนาดเล็ก
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 
 // Watch for route changes
+// ปิดแถบข้างเมื่อเปลี่ยนเส้นทางในหน้าจอขนาดเล็ก
 watch(
   () => route.fullPath,
   () => {
@@ -45,13 +57,13 @@ watch(
 );
 
 // Watch for screen size changes
+// อัปเดตสถานะแถบข้างเมื่อขนาดหน้าจอเปลี่ยน
 watch(isLargeScreen, (newValue) => {
   isSidebarOpen.value = newValue;
 });
 
 // กำหนดโครงสร้างเมนูหลัก
 // แต่ละเมนูประกอบด้วย id, label, icon, และ to (ลิงก์ปลายทาง)
-
 // เมนูแดชบอร์ด
 const dashboard = [
   {
@@ -458,12 +470,14 @@ const currentMenuTitle = computed(() => {
       v-model="isSidebarOpen"
     >
       <UDashboardSidebar>
-        <!-- ส่วนหัวของ sidebar -->
+        <!--------------------  Logo -------------------->
         <template #header>
           <img src="/images/logo.jpg" alt="Platform Logo" class="logo" />
         </template>
+        <!--------------------  Logo -------------------->
 
-        <!-- แสดงเมนูต่างๆ โดยใช้ UNavigationTree -->
+
+        <!-------------------- แสดงเมนูต่างๆ โดยใช้ UNavigationTree -------------------->
         <UNavigationTree :links="dashboard" class="fontdashboard" />
         <UDivider />
         <UNavigationTree :links="organization" class="fontdashboard" />
@@ -483,27 +497,32 @@ const currentMenuTitle = computed(() => {
         <UNavigationTree :links="report" default-open />
         <UDivider />
         <UNavigationTree :links="setting" default-open />
-
         <div class="flex-1" />
-
         <UDivider class="sticky bottom-0" />
+        <!-------------------- แสดงเมนูต่างๆ โดยใช้ UNavigationTree -------------------->
 
-        <!-- ส่วนท้ายของ sidebar -->
+
+        <!-------------------- ส่วนท้ายของ sidebar -------------------->
         <template #footer>
           <UserDropdown />
         </template>
+        <!-------------------- ส่วนท้ายของ sidebar -------------------->
       </UDashboardSidebar>
     </UDashboardPanel>
 
     <div class="flex-1 flex flex-col overflow-hidden">
+      <!-------------------- Topbar -------------------->
       <Topbar
         :title="currentMenuTitle"
         :isSidebarOpen="isSidebarOpen"
         :isSmallScreen="!isLargeScreen"
         @toggle-sidebar="toggleSidebar"
       />
+      <!-------------------- Topbar -------------------->
       <div class="flex-1 overflow-auto p-4">
+        <!-------------------- เนื้อหา -------------------->
         <slot />
+        <!-------------------- เนื้อหา -------------------->
       </div>
     </div>
 
@@ -512,10 +531,6 @@ const currentMenuTitle = computed(() => {
     <!-- คอมโพเนนต์สำหรับแสดงการแจ้งเตือน -->
     <NotificationsSlideover />
 
-    <!-- คอมโพเนนต์สำหรับการค้นหา -->
-    <ClientOnly>
-      <LazyUDashboardSearch :groups="groups" />
-    </ClientOnly>
   </UDashboardLayout>
 </template>
 
