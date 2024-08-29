@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const route = useRoute();
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+
+const route = useRoute()
 
 // กำหนดโครงสร้างเมนูหลัก
 // แต่ละเมนูประกอบด้วย id, label, icon, และ to (ลิงก์ปลายทาง)
@@ -365,6 +369,41 @@ const groups = [
     ],
   },
 ];
+
+// ฟังก์ชันสำหรับค้นหาเมนูจาก path
+const findMenuByPath = (menus, path) => {
+  for (const menu of menus) {
+    if (menu.to === path) {
+      return menu;
+    }
+    if (menu.children) {
+      const found = findMenuByPath(menu.children, path);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+// คำนวณชื่อเมนูปัจจุบัน
+const currentMenuTitle = computed(() => {
+  const currentPath = route.path;
+  const allMenus = [
+    ...dashboard,
+    ...organization,
+    ...license,
+    ...user,
+    ...equipment,
+    ...sensor,
+    ...environment,
+    ...asset,
+    ...report,
+    ...setting,
+  ];
+
+  const currentMenu = findMenuByPath(allMenus, currentPath);
+  return currentMenu ? currentMenu.label : "Dashboard";
+});
+
 </script>
 
 <template>
@@ -412,7 +451,12 @@ const groups = [
       </UDashboardSidebar>
     </UDashboardPanel>
 
-    <slot />
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <Topbar :title="currentMenuTitle" />
+      <div class="flex-1 overflow-auto p-4">
+        <slot />
+      </div>
+    </div>
 
     <!-- คอมโพเนนต์สำหรับแสดงความช่วยเหลือ -->
     <HelpSlideover />

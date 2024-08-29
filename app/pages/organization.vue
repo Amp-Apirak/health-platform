@@ -281,9 +281,6 @@ const paginatedFilteredRows = computed(() => {
 <template>
   <UDashboardPage>
     <UDashboardPanel grow>
-      <!-- เริ่มแถบด้านบน -->
-      <AppAppber />
-      <!-- จบแถบด้านบน -->
 
       <UDashboardPanelContent>
         <!-- ส่วนค้นหาและปุ่มเพิ่มข้อมูล -->
