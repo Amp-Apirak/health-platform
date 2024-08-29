@@ -1,4 +1,6 @@
 <script setup lang="ts">
+
+// ColorMode ---------------------------------------------------------------
 import { useColorMode } from "@vueuse/core";
 
 defineProps({
@@ -16,24 +18,33 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['toggle-sidebar']);
-
 const colorMode = useColorMode();
-const { isNotificationsSlideoverOpen } = useDashboard();
 
 const toggleColorMode = () => {
   colorMode.value = colorMode.value === "dark" ? "light" : "dark";
 };
+// ColorMode --------------------------------------------------------------
+
+// toggle -----------------------------------------------------------------
+const emit = defineEmits(["toggle-sidebar"]);
 
 const toggleSidebar = () => {
-  emit('toggle-sidebar');
+  emit("toggle-sidebar");
 };
+// toggle -----------------------------------------------------------------
+
+
+// ใช้ฟังก์ชัน useDashboard เพื่อดึงสถานะของแถบการแจ้งเตือน ------------------------
+const { isNotificationsSlideoverOpen } = useDashboard();
+
 </script>
 
 <template>
   <UDashboardNavbar>
+    <!----------- ปุ่มแฮมเบอร์เกอร์ และ ชื่อเมนู ----------->
     <template #left>
       <div class="flex items-center">
+        <!-- แสดงปุ่มเฉพาะในหน้าจอขนาดเล็ก-->
         <UButton
           v-if="isSmallScreen"
           icon="i-heroicons-bars-3"
@@ -45,6 +56,9 @@ const toggleSidebar = () => {
         <h1 class="text-lg font-semibold">{{ title }}</h1>
       </div>
     </template>
+  <!----------- ปุ่มแฮมเบอร์เกอร์ และ ชื่อเมนู -----------> 
+
+  <!----------- แสดงปุ่มแจ้งเตือนและสลับโหมดสี ----------->
     <template #right>
       <UButton
         color="gray"
@@ -66,5 +80,6 @@ const toggleSidebar = () => {
         />
       </UButton>
     </template>
+  <!----------- แสดงปุ่มแจ้งเตือนและสลับโหมดสี ----------->
   </UDashboardNavbar>
 </template>
