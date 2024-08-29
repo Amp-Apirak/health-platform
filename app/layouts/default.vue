@@ -1,9 +1,53 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
+import { useBreakpoints } from "@vueuse/core";
 
+const route = useRoute();
+const breakpoints = useBreakpoints({
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+});
+const isLargeScreen = breakpoints.greater('lg')
+const isSidebarOpen = ref(isLargeScreen.value);
 
-const route = useRoute()
+const checkScreenSize = () => {
+  if (isLargeScreen.value) {
+    isSidebarOpen.value = true;
+  } else {
+    isSidebarOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  checkScreenSize();
+  window.addEventListener("resize", checkScreenSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", checkScreenSize);
+});
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+// Watch for route changes
+watch(
+  () => route.fullPath,
+  () => {
+    if (!isLargeScreen.value) {
+      isSidebarOpen.value = false;
+    }
+  }
+);
+
+// Watch for screen size changes
+watch(isLargeScreen, (newValue) => {
+  isSidebarOpen.value = newValue;
+});
 
 // กำหนดโครงสร้างเมนูหลัก
 // แต่ละเมนูประกอบด้วย id, label, icon, และ to (ลิงก์ปลายทาง)
@@ -403,7 +447,6 @@ const currentMenuTitle = computed(() => {
   const currentMenu = findMenuByPath(allMenus, currentPath);
   return currentMenu ? currentMenu.label : "Dashboard";
 });
-
 </script>
 
 <template>
@@ -412,6 +455,7 @@ const currentMenuTitle = computed(() => {
       :width="250"
       :resizable="{ min: 200, max: 300 }"
       collapsible
+      v-model="isSidebarOpen"
     >
       <UDashboardSidebar>
         <!-- ส่วนหัวของ sidebar -->
@@ -452,7 +496,12 @@ const currentMenuTitle = computed(() => {
     </UDashboardPanel>
 
     <div class="flex-1 flex flex-col overflow-hidden">
-      <Topbar :title="currentMenuTitle" />
+      <Topbar
+        :title="currentMenuTitle"
+        :isSidebarOpen="isSidebarOpen"
+        :isSmallScreen="!isLargeScreen"
+        @toggle-sidebar="toggleSidebar"
+      />
       <div class="flex-1 overflow-auto p-4">
         <slot />
       </div>

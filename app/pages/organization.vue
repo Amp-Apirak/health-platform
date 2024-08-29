@@ -24,9 +24,8 @@ const columns = [
   { key: "county", label: "เมือง/แขวง", sortable: true },
   { key: "province", label: "จังหวัด", sortable: true },
   { key: "date", label: "วันที่สร้าง", sortable: true },
-  { key: "actions" }
+  { key: "actions" },
 ];
-
 
 const selectedColumns = ref([...columns]);
 
@@ -281,13 +280,14 @@ const paginatedFilteredRows = computed(() => {
 <template>
   <UDashboardPage>
     <UDashboardPanel grow>
-
       <UDashboardPanelContent>
         <!-- ส่วนค้นหาและปุ่มเพิ่มข้อมูล -->
         <div
-          class="flex justify-between items-center px-3 py-3.5 border-b border-gray-200 dark:border-gray-700"
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-3 py-3.5 border-b border-gray-200 dark:border-gray-700 space-y-3 sm:space-y-0"
         >
-          <div class="flex items-center space-x-3">
+          <div
+           class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto"
+          >
             <!-- ใช้ flex และ space-x-3 สำหรับเว้นระยะห่างระหว่าง Columns และ Filter -->
             <USelectMenu
               v-model="selectedColumns"
@@ -296,34 +296,36 @@ const paginatedFilteredRows = computed(() => {
               placeholder="Columns"
               class="w-48"
             />
-            <UInput 
-              v-model="q" 
-              placeholder="Filter ..." 
+            <UInput
+              v-model="q"
+              placeholder="Filter ..."
               class="flex-grow w-80"
             />
           </div>
-          <UButton color="primary" @click="openPopup" class="ml-auto">
+          <UButton color="primary" @click="openPopup" class="">
             เพิ่มข้อมูลองค์กร
           </UButton>
         </div>
 
         <!-- ตารางแสดงข้อมูลองค์กร -->
-        <UTable :rows="paginatedFilteredRows" :columns="selectedColumns" >
-          <template #actions-data="{ row }">
-            <UDropdown :items="items(row)">
-              <!-- <UButton
+        <div class="overflow-x-auto">
+          <UTable :rows="paginatedFilteredRows" :columns="selectedColumns">
+            <template #actions-data="{ row }">
+              <UDropdown :items="items(row)">
+                <!-- <UButton
                 color="gray"
                 variant="ghost"
                 icon="i-heroicons-ellipsis-horizontal-20-solid"
                 size="xs"
               /> -->
-            </UDropdown>
-          </template>
-        </UTable>
+              </UDropdown>
+            </template>
+          </UTable>
+        </div>
 
         <!-- แสดงจำนวนรายการและการแบ่งหน้า -->
         <div
-          class="flex justify-between px-3 py-3.5 border-t border-gray-200 dark:border-gray-700"
+          class="flex flex-col sm:flex-row justify-between items-center px-3 py-3.5 border-t border-gray-200 dark:border-gray-700 space-y-3 sm:space-y-0"
         >
           Total: {{ filteredRows.length }} entries
 
@@ -340,5 +342,4 @@ const paginatedFilteredRows = computed(() => {
     <PopupComponent v-if="isPopupOpen" @close="isPopupOpen = false" />
   </UDashboardPage>
 </template>
-
 
