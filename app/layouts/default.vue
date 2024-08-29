@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const route = useRoute();
-
-// กำหนดโครงสร้างเมนูหลัก
-// แต่ละเมนูประกอบด้วย id, label, icon, และ to (ลิงก์ปลายทาง)
+import { useRoute } from "vue-router";
+import { computed } from "vue";
 
 // เมนูแดชบอร์ด
 const dashboard = [
@@ -365,13 +364,47 @@ const groups = [
     ],
   },
 ];
+
+// ฟังก์ชันสำหรับค้นหาเมนูจาก path
+const findMenuByPath = (menus, path) => {
+  for (const menu of menus) {
+    if (menu.to === path) {
+      return menu;
+    }
+    if (menu.children) {
+      const found = findMenuByPath(menu.children, path);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+// คำนวณชื่อเมนูปัจจุบัน
+const currentMenuTitle = computed(() => {
+  const currentPath = route.path;
+  const allMenus = [
+    ...dashboard,
+    ...organization,
+    ...license,
+    ...user,
+    ...equipment,
+    ...sensor,
+    ...environment,
+    ...asset,
+    ...report,
+    ...setting,
+  ];
+
+  const currentMenu = findMenuByPath(allMenus, currentPath);
+  return currentMenu ? currentMenu.label : "Dashboard";
+});
 </script>
 
 <template>
   <UDashboardLayout>
     <UDashboardPanel
       :width="250"
-      :resizable="{ min: 200, max: 300 }"
+      :resizable="{ min: 50, max: 300, storage: 'local' }"
       collapsible
     >
       <UDashboardSidebar>
@@ -412,7 +445,16 @@ const groups = [
       </UDashboardSidebar>
     </UDashboardPanel>
 
-    <slot />
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-------------------- Topbar -------------------->
+      <LayoutsTopbar :title="currentMenuTitle" />
+      <!-------------------- Topbar -------------------->
+      <div class="flex-1 overflow-auto p-4">
+        <!-------------------- เนื้อหา -------------------->
+        <slot />
+        <!-------------------- เนื้อหา -------------------->
+      </div>
+    </div>
 
     <!-- คอมโพเนนต์สำหรับแสดงความช่วยเหลือ -->
     <HelpSlideover />

@@ -281,26 +281,6 @@ const paginatedFilteredRows = computed(() => {
 <template>
   <UDashboardPage>
     <UDashboardPanel grow>
-      <!-- เริ่มแถบด้านบน -->
-      <UDashboardNavbar title="Organization Management">
-        <template #right>
-          <!-- ปุ่มการแจ้งเตือน -->
-          <UTooltip text="Notifications" :shortcuts="['N']">
-            <UButton
-              color="gray"
-              variant="ghost"
-              square
-              @click="isNotificationsSlideoverOpen = true"
-            >
-              <UChip color="red" inset>
-                <UIcon name="i-heroicons-bell" class="w-5 h-5" />
-              </UChip>
-            </UButton>
-          </UTooltip>
-        </template>
-      </UDashboardNavbar>
-      <!-- จบแถบด้านบน -->
-
       <UDashboardPanelContent>
         <!-- ส่วนค้นหาและปุ่มเพิ่มข้อมูล -->
         <div
