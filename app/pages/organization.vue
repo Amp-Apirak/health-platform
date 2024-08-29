@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import PopupComponent from "../components/organization/PopupComponent.vue";
 
+
+
 // สร้างตัวแปรเพื่อตรวจสอบสถานะของ Popup
 const isPopupOpen = ref(false);
 console.log(isPopupOpen.value);
@@ -27,6 +29,7 @@ const columns = [
   { key: "actions" },
 ];
 
+// ตัวแปรที่ใช้เก็บคอลัมน์ที่ถูกเลือกสำหรับการแสดงผล
 const selectedColumns = ref([...columns]);
 
 // ข้อมูลขององค์กรต่าง ๆ
