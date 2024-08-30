@@ -4,20 +4,27 @@ import { useRoute } from "vue-router";
 import { computed } from "vue";
 
 // เมนูแดชบอร์ด
-const menulist = [
+const dashboard = [
   {
     id: "Dashboard",
     label: "Dashboard",
     icon: "mage:dashboard-bar",
     to: "/",
   },
-  // เมนูจัดการองค์กร
+];
+
+// เมนูจัดการองค์กร
+const organization = [
   {
     id: "Organization Management",
     label: "Organization Management",
     icon: "octicon:organization-24",
     to: "/organization",
   },
+];
+
+// เมนูจัดการใบอนุญาต
+const license = [
   {
     id: "License Management",
     label: "License Management",
@@ -39,7 +46,10 @@ const menulist = [
       },
     ],
   },
-  // เมนูจัดการผู้ใช้
+];
+
+// เมนูจัดการผู้ใช้
+const user = [
   {
     id: "User Management",
     label: "User Management",
@@ -61,7 +71,10 @@ const menulist = [
       },
     ],
   },
-  // เมนูอุปกรณ์สุขภาพ
+];
+
+// เมนูอุปกรณ์สุขภาพ
+const equipment = [
   {
     id: "Health Equipment",
     label: "Health Equipment",
@@ -142,7 +155,10 @@ const menulist = [
       },
     ],
   },
-  // เมนูศูนย์สุขภาพ
+];
+
+// เมนูศูนย์สุขภาพ
+const sensor = [
   {
     id: "Health Center ",
     label: "Health Center ",
@@ -204,7 +220,10 @@ const menulist = [
       },
     ],
   },
-  // เมนูศูนย์สิ่งแวดล้อม
+];
+
+// เมนูศูนย์สิ่งแวดล้อม
+const environment = [
   {
     id: "Environment Center",
     label: "Environment Center",
@@ -218,7 +237,10 @@ const menulist = [
       },
     ],
   },
-  // เมนูสินทรัพย์
+];
+
+// เมนูสินทรัพย์
+const asset = [
   {
     id: "Asset Inventory",
     label: "Asset Inventory",
@@ -247,7 +269,10 @@ const menulist = [
       },
     ],
   },
-  // เมนูรายงาน
+];
+
+// เมนูรายงาน
+const report = [
   {
     id: "Report",
     label: "Report",
@@ -271,7 +296,10 @@ const menulist = [
       },
     ],
   },
-  // เมนูการตั้งค่า
+];
+
+// เมนูการตั้งค่า
+const setting = [
   {
     id: "Setting",
     label: "Setting",
@@ -299,14 +327,22 @@ const menulist = [
   },
 ];
 
-
-
 // สร้างกลุ่มเมนูสำหรับการค้นหาและการนำทาง
 const groups = [
   {
     key: "links",
     label: "Go to",
     commands: [
+      ...dashboard,
+      ...organization,
+      ...license,
+      ...user,
+      ...equipment,
+      ...sensor,
+      ...environment,
+      ...asset,
+      ...report,
+      ...setting,
     ],
   },
   {
@@ -347,7 +383,16 @@ const findMenuByPath = (menus, path) => {
 const currentMenuTitle = computed(() => {
   const currentPath = route.path;
   const allMenus = [
-    ...menulist
+    ...dashboard,
+    ...organization,
+    ...license,
+    ...user,
+    ...equipment,
+    ...sensor,
+    ...environment,
+    ...asset,
+    ...report,
+    ...setting,
   ];
 
   const currentMenu = findMenuByPath(allMenus, currentPath);
@@ -370,7 +415,25 @@ const currentMenuTitle = computed(() => {
         </template>
 
         <!-- แสดงเมนูต่างๆ โดยใช้ UNavigationTree -->
-        <UNavigationTree :links="menulist" default-open />
+        <UNavigationTree :links="dashboard" class="fontdashboard" />
+        <UDivider />
+        <UNavigationTree :links="organization" class="fontdashboard" />
+        <UDivider />
+        <UNavigationTree :links="license" default-open />
+        <UDivider />
+        <UNavigationTree :links="user" default-open />
+        <UDivider />
+        <UNavigationTree :links="equipment" default-open />
+        <UDivider />
+        <UNavigationTree :links="sensor" default-open />
+        <UDivider />
+        <UNavigationTree :links="environment" default-open />
+        <UDivider />
+        <UNavigationTree :links="asset" default-open />
+        <UDivider />
+        <UNavigationTree :links="report" default-open />
+        <UDivider />
+        <UNavigationTree :links="setting" default-open />
 
         <div class="flex-1" />
 

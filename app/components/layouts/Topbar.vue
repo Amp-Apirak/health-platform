@@ -1,5 +1,17 @@
 <script setup lang="ts">
 const { isNotificationsSlideoverOpen } = useDashboard();
+
+// รับ prop title
+defineProps({
+  title: {
+    type: String,
+    default: 'Dashboard'
+  },
+  isSmallScreen: {
+    type: Boolean,
+    default: false
+  }
+});
 </script>
 
 <template>
