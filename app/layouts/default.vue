@@ -299,15 +299,12 @@ const menulist = [
   },
 ];
 
-
-
 // สร้างกลุ่มเมนูสำหรับการค้นหาและการนำทาง
 const groups = [
   {
     key: "links",
     label: "Go to",
-    commands: [
-    ],
+    commands: [],
   },
   {
     key: "code",
@@ -346,9 +343,7 @@ const findMenuByPath = (menus, path) => {
 // คำนวณชื่อเมนูปัจจุบัน
 const currentMenuTitle = computed(() => {
   const currentPath = route.path;
-  const allMenus = [
-    ...menulist
-  ];
+  const allMenus = [...menulist];
 
   const currentMenu = findMenuByPath(allMenus, currentPath);
   return currentMenu ? currentMenu.label : "Dashboard";
@@ -356,7 +351,6 @@ const currentMenuTitle = computed(() => {
 </script>
 
 <template>
-<UAside :links="links">
   <UDashboardLayout>
     <UDashboardPanel
       :width="250"
@@ -404,7 +398,6 @@ const currentMenuTitle = computed(() => {
       <LazyUDashboardSearch :groups="groups" />
     </ClientOnly>
   </UDashboardLayout>
-</UAside>
 </template>
 
 <style>
