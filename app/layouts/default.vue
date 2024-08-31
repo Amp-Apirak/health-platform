@@ -1,10 +1,15 @@
 <script setup lang="ts">
-const route = useRoute();
+// นำเข้าฟังก์ชันและไลบรารีที่จำเป็น
+// ใช้สำหรับดึงข้อมูล route ปัจจุบัน
+// ใช้สำหรับคำนวณ property ที่เปลี่ยนแปลงไปตาม state
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 
-// เมนูแดชบอร์ด
-const menulist = [
+// ดึงข้อมูลเส้นทางปัจจุบันจาก Vue Router
+const route = useRoute();
+
+// กำหนดรายการเมนูที่จะแสดงในแถบด้านข้างของแดชบอร์ด
+const links = [
   {
     id: "Dashboard",
     label: "Dashboard",
@@ -299,33 +304,6 @@ const menulist = [
   },
 ];
 
-// สร้างกลุ่มเมนูสำหรับการค้นหาและการนำทาง
-const groups = [
-  {
-    key: "links",
-    label: "Go to",
-    commands: [],
-  },
-  {
-    key: "code",
-    label: "Code",
-    commands: [
-      {
-        id: "source",
-        label: "View page source",
-        icon: "i-simple-icons-github",
-        click: () => {
-          window.open(
-            `https://github.com/nuxt-ui-pro/dashboard/blob/main/pages${
-              route.path === "/" ? "/index" : route.path
-            }.vue, '_blank'`
-          );
-        },
-      },
-    ],
-  },
-];
-
 // ฟังก์ชันสำหรับค้นหาเมนูจาก path
 const findMenuByPath = (menus, path) => {
   for (const menu of menus) {
@@ -340,14 +318,30 @@ const findMenuByPath = (menus, path) => {
   return null;
 };
 
-// คำนวณชื่อเมนูปัจจุบัน
-const currentMenuTitle = computed(() => {
-  const currentPath = route.path;
-  const allMenus = [...menulist];
+// ฟังก์ชันสร้างลิงก์สำหรับ Breadcrumb
+const generateBreadcrumbLinks = (currentPath) => {
+  const breadcrumbLinks = [];
+  let currentMenu = findMenuByPath(links, currentPath);
 
-  const currentMenu = findMenuByPath(allMenus, currentPath);
-  return currentMenu ? currentMenu.label : "Dashboard";
-});
+  while (currentMenu) {
+    breadcrumbLinks.unshift({
+      label: currentMenu.label,
+      icon: currentMenu.icon,
+      to: currentMenu.to,
+    });
+
+    const parentPath = currentMenu.to.substring(
+      0,
+      currentMenu.to.lastIndexOf("/")
+    ); 
+    currentMenu = findMenuByPath(links, parentPath);
+  }
+
+  return breadcrumbLinks;
+};
+
+// คำนวณลิงก์ Breadcrumb ปัจจุบัน
+const breadcrumbLinks = computed(() => generateBreadcrumbLinks(route.path));
 </script>
 
 <template>
@@ -358,14 +352,20 @@ const currentMenuTitle = computed(() => {
       collapsible
     >
       <UDashboardSidebar>
-        <!-- ส่วนหัวของ sidebar -->
+        <!-------------------- LOGO -------------------->
         <template #header>
-          <img src="/images/logo.jpg" alt="Platform Logo" class="logo" />
+          <img
+            src="/images/logo.jpg"
+            alt="Platform Logo"
+            style="width: 100%; max-width: 150px; height: auto; margin: 0 auto"
+          />
         </template>
+        <!-------------------- LOGO -------------------->
 
         <!-- แสดงเมนูต่างๆ โดยใช้ UNavigationTree -->
-        <UNavigationTree :links="menulist" default-open />
+        <UNavigationTree :links="links" :default-open="true" />
 
+        <!-- เว้นที่ว่างเพื่อให้ footer อยู่ด้านล่าง -->
         <div class="flex-1" />
 
         <UDivider class="sticky bottom-0" />
@@ -379,10 +379,11 @@ const currentMenuTitle = computed(() => {
 
     <div class="flex-1 flex flex-col overflow-hidden">
       <!-------------------- Topbar -------------------->
-      <LayoutsTopbar :title="currentMenuTitle" />
+      <LayoutsTopbar />
       <!-------------------- Topbar -------------------->
       <div class="flex-1 overflow-auto p-4">
         <!-------------------- เนื้อหา -------------------->
+        <UBreadcrumb :links="breadcrumbLinks" class="mb-4" />
         <slot />
         <!-------------------- เนื้อหา -------------------->
       </div>
@@ -390,7 +391,6 @@ const currentMenuTitle = computed(() => {
 
     <!-- คอมโพเนนต์สำหรับแสดงความช่วยเหลือ -->
     <HelpSlideover />
-    <!-- คอมโพเนนต์สำหรับแสดงการแจ้งเตือน -->
     <NotificationsSlideover />
 
     <!-- คอมโพเนนต์สำหรับการค้นหา -->
@@ -400,44 +400,4 @@ const currentMenuTitle = computed(() => {
   </UDashboardLayout>
 </template>
 
-<style>
-/* สไตล์สำหรับตัวอักษรหนาในแดชบอร์ด */
-.fontdashboard {
-  font-weight: bold;
-}
-
-/* สไตล์สำหรับสีตัวอักษรในแดชบอร์ด */
-.fontdashboard-color {
-  color: #767d8a;
-}
-
-/* สไตล์สำหรับการจัดการรูปภาพให้คงสัดส่วน */
-.object-contain {
-  object-fit: contain;
-}
-
-/* สไตล์สำหรับโลโก้ */
-.logo {
-  width: 100%;
-  max-width: 150px; /* ปรับขนาดสูงสุดตามต้องการ */
-  height: auto;
-  margin: 0 auto; /* จัดให้อยู่กึ่งกลาง */
-}
-
-/* สไตล์สำหรับส่วนหัว */
-.header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* สไตล์สำหรับลิงก์ในแถบด้านข้างของแดชบอร์ด */
-.dashboard-sidebar-link-class {
-  font-size: 0.875rem; /* ขนาดตัวอักษร */
-  line-height: 1.5rem; /* ความสูงบรรทัด */
-  font-weight: 600; /* ความหนาของตัวอักษร */
-  overflow: hidden; /* ซ่อนข้อความที่เกินขอบเขต */
-  text-overflow: ellipsis; /* แสดงจุดไข่ปลาเมื่อข้อความเกิน */
-  white-space: nowrap; /* ไม่ขึ้นบรรทัดใหม่ */
-}
-</style>
+<style></style>

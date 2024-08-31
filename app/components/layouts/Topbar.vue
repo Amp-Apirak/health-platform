@@ -1,40 +1,11 @@
 <script setup lang="ts">
 const { isNotificationsSlideoverOpen } = useDashboard();
-
-// รับ prop title
-defineProps({
-  title: {
-    type: String,
-    default: 'Dashboard'
-  },
-  isSmallScreen: {
-    type: Boolean,
-    default: false
-  }
-});
 </script>
 
 <template>
-  <!-- เริ่มแถบด้านบน -->
   <UDashboardPanel>
-    <UDashboardNavbar >
-        <template #left>
-      <div class="flex items-center">
-        <!-- แสดงปุ่มเฉพาะในหน้าจอขนาดเล็ก-->
-        <UButton
-          v-if="isSmallScreen"
-          icon="i-heroicons-bars-3"
-          color="gray"
-          variant="ghost"
-          class="mr-2"
-          @click="toggleSidebar"
-        />
-        <h1 class="text-lg font-semibold">{{ title }}</h1>
-      </div>
-    </template>
-
+    <UDashboardNavbar title="Health Platform">
       <template #right>
-        <!-- ปุ่มการแจ้งเตือน -->
         <UTooltip text="Notifications" :shortcuts="['N']">
           <UButton
             color="gray"
@@ -51,5 +22,4 @@ defineProps({
       </template>
     </UDashboardNavbar>
   </UDashboardPanel>
-  <!-- จบแถบด้านบน -->
 </template>

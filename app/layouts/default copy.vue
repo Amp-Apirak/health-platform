@@ -1,30 +1,29 @@
 <script setup lang="ts">
-const route = useRoute();
+// นำเข้าฟังก์ชันและไลบรารีที่จำเป็น
+// ใช้สำหรับดึงข้อมูล route ปัจจุบัน
+// ใช้สำหรับคำนวณ property ที่เปลี่ยนแปลงไปตาม state
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 
-// เมนูแดชบอร์ด
-const dashboard = [
+// กำหนดค่าตัวแปรสำหรับ route
+// ดึงข้อมูลเส้นทางปัจจุบันจาก Vue Router
+const route = useRoute();
+
+// กำหนดรายการเมนูที่จะแสดงในแถบด้านข้างของแดชบอร์ด
+const menulist = [
   {
     id: "Dashboard",
     label: "Dashboard",
     icon: "mage:dashboard-bar",
     to: "/",
   },
-];
-
-// เมนูจัดการองค์กร
-const organization = [
+  // เมนูจัดการองค์กร
   {
     id: "Organization Management",
     label: "Organization Management",
     icon: "octicon:organization-24",
     to: "/organization",
   },
-];
-
-// เมนูจัดการใบอนุญาต
-const license = [
   {
     id: "License Management",
     label: "License Management",
@@ -46,10 +45,7 @@ const license = [
       },
     ],
   },
-];
-
-// เมนูจัดการผู้ใช้
-const user = [
+  // เมนูจัดการผู้ใช้
   {
     id: "User Management",
     label: "User Management",
@@ -71,10 +67,7 @@ const user = [
       },
     ],
   },
-];
-
-// เมนูอุปกรณ์สุขภาพ
-const equipment = [
+  // เมนูอุปกรณ์สุขภาพ
   {
     id: "Health Equipment",
     label: "Health Equipment",
@@ -155,10 +148,7 @@ const equipment = [
       },
     ],
   },
-];
-
-// เมนูศูนย์สุขภาพ
-const sensor = [
+  // เมนูศูนย์สุขภาพ
   {
     id: "Health Center ",
     label: "Health Center ",
@@ -220,10 +210,7 @@ const sensor = [
       },
     ],
   },
-];
-
-// เมนูศูนย์สิ่งแวดล้อม
-const environment = [
+  // เมนูศูนย์สิ่งแวดล้อม
   {
     id: "Environment Center",
     label: "Environment Center",
@@ -237,10 +224,7 @@ const environment = [
       },
     ],
   },
-];
-
-// เมนูสินทรัพย์
-const asset = [
+  // เมนูสินทรัพย์
   {
     id: "Asset Inventory",
     label: "Asset Inventory",
@@ -269,10 +253,7 @@ const asset = [
       },
     ],
   },
-];
-
-// เมนูรายงาน
-const report = [
+  // เมนูรายงาน
   {
     id: "Report",
     label: "Report",
@@ -296,10 +277,7 @@ const report = [
       },
     ],
   },
-];
-
-// เมนูการตั้งค่า
-const setting = [
+  // เมนูการตั้งค่า
   {
     id: "Setting",
     label: "Setting",
@@ -332,18 +310,7 @@ const groups = [
   {
     key: "links",
     label: "Go to",
-    commands: [
-      ...dashboard,
-      ...organization,
-      ...license,
-      ...user,
-      ...equipment,
-      ...sensor,
-      ...environment,
-      ...asset,
-      ...report,
-      ...setting,
-    ],
+    commands: [],
   },
   {
     key: "code",
@@ -382,26 +349,16 @@ const findMenuByPath = (menus, path) => {
 // คำนวณชื่อเมนูปัจจุบัน
 const currentMenuTitle = computed(() => {
   const currentPath = route.path;
-  const allMenus = [
-    ...dashboard,
-    ...organization,
-    ...license,
-    ...user,
-    ...equipment,
-    ...sensor,
-    ...environment,
-    ...asset,
-    ...report,
-    ...setting,
-  ];
+  const allMenus = [...menulist];
 
+  // ค้นหาเมนูปัจจุบันจาก path
   const currentMenu = findMenuByPath(allMenus, currentPath);
+  // ถ้าพบเมนูปัจจุบัน ให้แสดงชื่อเมนู ถ้าไม่พบให้แสดง "Dashboard"
   return currentMenu ? currentMenu.label : "Dashboard";
 });
 </script>
 
 <template>
-<UAside :links="links">
   <UDashboardLayout>
     <UDashboardPanel
       :width="250"
@@ -411,30 +368,17 @@ const currentMenuTitle = computed(() => {
       <UDashboardSidebar>
         <!-- ส่วนหัวของ sidebar -->
         <template #header>
-          <img src="/images/logo.jpg" alt="Platform Logo" class="logo" />
+          <img 
+            src="/images/logo.jpg" 
+            alt="Platform Logo" 
+            style="width: 100%; max-width: 150px; height: auto; margin: 0 auto;" 
+          />
         </template>
 
         <!-- แสดงเมนูต่างๆ โดยใช้ UNavigationTree -->
-        <UNavigationTree :links="dashboard" class="fontdashboard" />
-        <UDivider />
-        <UNavigationTree :links="organization" class="fontdashboard" />
-        <UDivider />
-        <UNavigationTree :links="license" default-open />
-        <UDivider />
-        <UNavigationTree :links="user" default-open />
-        <UDivider />
-        <UNavigationTree :links="equipment" default-open />
-        <UDivider />
-        <UNavigationTree :links="sensor" default-open />
-        <UDivider />
-        <UNavigationTree :links="environment" default-open />
-        <UDivider />
-        <UNavigationTree :links="asset" default-open />
-        <UDivider />
-        <UNavigationTree :links="report" default-open />
-        <UDivider />
-        <UNavigationTree :links="setting" default-open />
+        <UNavigationTree :links="menulist" default-open />
 
+        <!-- เว้นที่ว่างเพื่อให้ footer อยู่ด้านล่าง -->
         <div class="flex-1" />
 
         <UDivider class="sticky bottom-0" />
@@ -467,47 +411,8 @@ const currentMenuTitle = computed(() => {
       <LazyUDashboardSearch :groups="groups" />
     </ClientOnly>
   </UDashboardLayout>
-</UAside>
 </template>
 
 <style>
-/* สไตล์สำหรับตัวอักษรหนาในแดชบอร์ด */
-.fontdashboard {
-  font-weight: bold;
-}
 
-/* สไตล์สำหรับสีตัวอักษรในแดชบอร์ด */
-.fontdashboard-color {
-  color: #767d8a;
-}
-
-/* สไตล์สำหรับการจัดการรูปภาพให้คงสัดส่วน */
-.object-contain {
-  object-fit: contain;
-}
-
-/* สไตล์สำหรับโลโก้ */
-.logo {
-  width: 100%;
-  max-width: 150px; /* ปรับขนาดสูงสุดตามต้องการ */
-  height: auto;
-  margin: 0 auto; /* จัดให้อยู่กึ่งกลาง */
-}
-
-/* สไตล์สำหรับส่วนหัว */
-.header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* สไตล์สำหรับลิงก์ในแถบด้านข้างของแดชบอร์ด */
-.dashboard-sidebar-link-class {
-  font-size: 0.875rem; /* ขนาดตัวอักษร */
-  line-height: 1.5rem; /* ความสูงบรรทัด */
-  font-weight: 600; /* ความหนาของตัวอักษร */
-  overflow: hidden; /* ซ่อนข้อความที่เกินขอบเขต */
-  text-overflow: ellipsis; /* แสดงจุดไข่ปลาเมื่อข้อความเกิน */
-  white-space: nowrap; /* ไม่ขึ้นบรรทัดใหม่ */
-}
 </style>
