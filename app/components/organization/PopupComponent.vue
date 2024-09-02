@@ -100,7 +100,7 @@ const submit = () => {
 </script>
 
 <template>
-  <UModal v-model="isOpen" prevent-close fullscreen >
+  <UModal v-model="isOpen" prevent-close  >
     <UCard
       :ui="{
         base: 'flex flex-col max-h-screen overflow-y-auto',

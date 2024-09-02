@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import OrgModal from "~/components/organization/PopupComponent.vue";
+import OrgModal from "~/components/AssetInventory/PopupAsset.vue";
 
 // ข้อมูลขององค์กรต่าง ๆ
 const orgs = ref([

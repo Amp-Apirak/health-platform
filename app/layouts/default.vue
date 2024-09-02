@@ -109,17 +109,17 @@ const links = [
           },
           {
             label: "Health Monitoring",
-            to: "/equipment/",
+            to: "/equipment/healthMonitoring",
             exact: true,
           },
           {
             label: "Health Setting",
-            to: "/equipment/",
+            to: "/equipment/healthSetting",
             exact: true,
           },
           {
             label: "Checkup Report",
-            to: "/equipment/",
+            to: "/equipment/checkupReport",
             exact: true,
           },
         ],
@@ -130,17 +130,17 @@ const links = [
         children: [
           {
             label: "Urine test dashboard",
-            to: "/equipment/",
+            to: "/equipment/urineDashboard",
             exact: true,
           },
           {
             label: "Urine test monitoring",
-            to: "/equipment/",
+            to: "/equipment/urineMonitoring",
             exact: true,
           },
           {
             label: "Urine test settings",
-            to: "/equipment/",
+            to: "/equipment/urineSetting",
             exact: true,
           },
         ],
@@ -149,8 +149,8 @@ const links = [
   },
   // เมนูศูนย์สุขภาพ
   {
-    id: "Health Center ",
-    label: "Health Center ",
+    id: "Health Sensor ",
+    label: "Health Sensor ",
     to: "/sensor",
     icon: "streamline:health-medical-heart-rate-health-beauty-information-data-beat-pulse-monitor-heart-rate-info",
     children: [
@@ -160,22 +160,22 @@ const links = [
         children: [
           {
             label: "Dashboard",
-            to: "/",
+            to: "/running/runningDash",
             exact: true,
           },
           {
             label: "Monitoring",
-            to: "/",
+            to: "/running/runningMonitoring",
             exact: true,
           },
           {
             label: "Report",
-            to: "/",
+            to: "/running/runningReport",
             exact: true,
           },
           {
             label: "Setting",
-            to: "/",
+            to: "/running/runningSetting",
             exact: true,
           },
         ],
@@ -187,22 +187,48 @@ const links = [
         children: [
           {
             label: "Dashboard",
-            to: "/",
+            to: "/smart/smartDash",
             exact: true,
           },
           {
             label: "Monitoring",
-            to: "/",
+            to: "/smart/smartMonitoring",
             exact: true,
           },
           {
             label: "Report",
-            to: "/",
+            to: "/smart/smartReport",
             exact: true,
           },
           {
             label: "Setting",
-            to: "/",
+            to: "/smart/smartSetting",
+            exact: true,
+          },
+        ],
+      },
+      {
+        label: "Emergency",
+        to: "/emergency",
+        children: [
+          {
+            label: "Dashboard",
+            to: "/emergency/emergencyDash",
+            exact: true,
+          },
+          {
+            label: "Monitoring",
+            to: "/emergency/emergencyMonitoring",
+            exact: true,
+          },
+          {
+            label: "Report",
+            to: "/emergency/emergencyReport",
+            exact: true,
+          },
+          {
+            label: "Setting",
+            to: "/emergency/emergencySetting",
             exact: true,
           },
         ],
@@ -211,8 +237,8 @@ const links = [
   },
   // เมนูศูนย์สิ่งแวดล้อม
   {
-    id: "Environment Center",
-    label: "Environment Center",
+    id: "Environment Sensor",
+    label: "Environment Sensor",
     icon: "streamline:nature-ecology-leaf-environment-leaf-ecology-plant-plants-eco",
     to: "/environment",
     children: [
@@ -228,26 +254,26 @@ const links = [
     id: "Asset Inventory",
     label: "Asset Inventory",
     icon: "material-symbols:inventory",
-    to: "/asset",
+    to: "/assets",
     children: [
       {
         label: "Dashboard Inventory",
-        to: "/null",
+        to: "/assets/assetDash",
         exact: true,
       },
       {
         label: "Inventory Management",
-        to: "/null",
+        to: "/assets/assetMng",
         exact: true,
       },
       {
         label: "Match usage",
-        to: "/null",
+        to: "/assets/matchUsage",
         exact: true,
       },
       {
         label: "Report Inventory",
-        to: "/null",
+        to: "/assets/assetReport",
         exact: true,
       },
     ],
@@ -261,17 +287,17 @@ const links = [
     children: [
       {
         label: "Organization Report",
-        to: "/report",
+        to: "/report/organizationReport",
         exact: true,
       },
       {
         label: "User Report",
-        to: "/report",
+        to: "/report/userReport",
         exact: true,
       },
       {
         label: "Account Report",
-        to: "/report",
+        to: "/report/accountReport",
         exact: true,
       },
     ],
@@ -285,16 +311,16 @@ const links = [
     children: [
       {
         label: "Organization Setting",
-        to: "/running",
+        to: "/setting",
         children: [
           {
             label: "สักกัด",
-            to: "/",
+            to: "/setting/settingLocation",
             exact: true,
           },
           {
             label: "Level",
-            to: "/",
+            to: "/setting/settingLevel",
             exact: true,
           },
         ],

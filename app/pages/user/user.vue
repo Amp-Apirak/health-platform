@@ -1,40 +1,180 @@
-<script lang="ts" setup>
+<script setup>
+import { ref, computed, watch } from "vue";
+import UserModal from "~/components/user/PopupUser.vue";
+
+// ข้อมูลผู้ใช้
+const users = ref([
+  {
+    id: 2,
+    username: "jane_smith",
+    role: "ผู้ใช้งานทั่วไป",
+    fullName: "Jane Smith",
+    organization: "ThreePranAcad",
+    status: "Inactive",
+    createdAt: "2023-08-15",
+  },
+  {
+    id: 1,
+    username: "john_doe",
+    role: "ผู้ดูแลระบบ",
+    fullName: "John Doe",
+    organization: "ThaiPolice",
+    status: "Active",
+    createdAt: "2023-09-01",
+  },
+  {
+    id: 3,
+    username: "alice_johnson",
+    role: "ผู้จัดการ",
+    fullName: "Alice Johnson",
+    organization: "ThaiHospital",
+    status: "Active",
+    createdAt: "2023-10-05",
+  },
+]);
+
+// สถานะของ Modal
+const isUserModalOpen = ref(false);
+const modalMode = ref("add"); // 'add' หรือ 'edit'
+const editingUser = ref(null);
+
+// เปิด Modal สำหรับเพิ่มผู้ใช้ใหม่
+const openAddUserModal = () => {
+  modalMode.value = "add";
+  editingUser.value = null;
+  isUserModalOpen.value = true;
+};
+
+// เปิด Modal สำหรับแก้ไขผู้ใช้
+const openEditUserModal = (user) => {
+  modalMode.value = "edit";
+  editingUser.value = { ...user };
+  isUserModalOpen.value = true;
+};
+
+// เพิ่มฟังก์ชัน saveUser
+const saveUser = (userData) => {
+  if (modalMode.value === "add") {
+    addUser(userData);
+  } else {
+    editUser(userData);
+  }
+  closeUserModal();
+};
+
+// ปิด Modal
+const closeUserModal = () => {
+  isUserModalOpen.value = false;
+  editingUser.value = null;
+};
+
+// เพิ่มผู้ใช้ใหม่
+const addUser = (newUser) => {
+  newUser.id = users.value.length + 1; // สร้าง ID ใหม่
+  newUser.createdAt = new Date().toISOString().split("T")[0]; // วันที่ปัจจุบัน
+  users.value.push(newUser);
+  closeUserModal();
+};
+
+// แก้ไขข้อมูลผู้ใช้
+const editUser = (updatedUser) => {
+  const index = users.value.findIndex((user) => user.id === updatedUser.id);
+  if (index !== -1) {
+    users.value[index] = updatedUser;
+  }
+  closeUserModal();
+};
+
+// ลบผู้ใช้
+const deleteUser = (userId) => {
+  users.value = users.value.filter((user) => user.id !== userId);
+};
+
 // กำหนดคอลัมน์ของตาราง
 const columns = [
-  {
-    key: "id",
-    label: "#",
-    sortable: true,
-  },
-  {
-    key: "title",
-    label: "Title",
-    sortable: true,
-  },
-  {
-    key: "completed",
-    label: "Status",
-    sortable: true,
-  },
-  {
-    key: "actions",
-    label: "Actions",
-    sortable: false,
-  },
+  { key: "id", label: "ลำดับ", sortable: true },
+  { key: "username", label: "ชื่อผู้ใช้งาน", sortable: true },
+  { key: "role", label: "สิทธิ์", sortable: true },
+  { key: "fullName", label: "ชื่อ-สกุล", sortable: true },
+  { key: "organization", label: "องค์กร", sortable: true },
+  { key: "status", label: "สถานะ", sortable: true },
+  { key: "createdAt", label: "วันที่สร้าง", sortable: true },
+  { key: "actions", label: "Actions", sortable: false },
 ];
 
-// สร้างตัวแปร ref เพื่อเก็บคอลัมน์ที่ถูกเลือก
+// คอลัมน์ที่ถูกเลือกให้แสดง
 const selectedColumns = ref(columns);
-
-// สร้าง computed property เพื่อกรองคอลัมน์ที่แสดงในตาราง
 const columnsTable = computed(() =>
   columns.filter((column) => selectedColumns.value.includes(column))
 );
 
-// สร้างตัวแปร ref เพื่อเก็บแถวที่ถูกเลือก
+// แถวที่ถูกเลือก
 const selectedRows = ref([]);
 
-// ฟังก์ชันสำหรับเลือก/ยกเลิกเลือกแถว
+// ค่าสำหรับการค้นหาและกรอง
+const search = ref("");
+const selectedStatus = ref("All");
+const selectedRole = ref("All");
+const selectedOrganization = ref("All");
+
+// การจัดเรียงและการแบ่งหน้า
+const sort = ref({ column: "id", direction: "asc" });
+const page = ref(1);
+const pageCount = ref(10);
+const pageTotal = computed(() => filteredUsers.value.length);
+
+// คำนวณช่วงของข้อมูลที่แสดงในแต่ละหน้า
+const pageFrom = computed(() => (page.value - 1) * pageCount.value + 1);
+const pageTo = computed(() =>
+  Math.min(page.value * pageCount.value, pageTotal.value)
+);
+
+// กรองข้อมูลตามเงื่อนไขที่กำหนด
+const filteredUsers = computed(() => {
+  let filtered = users.value;
+  if (search.value) {
+    const searchLower = search.value.toLowerCase();
+    filtered = filtered.filter((user) =>
+      Object.values(user).some((val) =>
+        val.toString().toLowerCase().includes(searchLower)
+      )
+    );
+  }
+  if (selectedStatus.value !== "All") {
+    filtered = filtered.filter((user) => user.status === selectedStatus.value);
+  }
+  if (selectedRole.value !== "All") {
+    filtered = filtered.filter((user) => user.role === selectedRole.value);
+  }
+  if (selectedOrganization.value !== "All") {
+    filtered = filtered.filter(
+      (user) => user.organization === selectedOrganization.value
+    );
+  }
+  return filtered;
+});
+
+// จัดเรียงข้อมูลตามคอลัมน์ที่เลือก
+const sortedUsers = computed(() => {
+  const sorted = [...filteredUsers.value];
+  sorted.sort((a, b) => {
+    if (a[sort.value.column] < b[sort.value.column])
+      return sort.value.direction === "asc" ? -1 : 1;
+    if (a[sort.value.column] > b[sort.value.column])
+      return sort.value.direction === "asc" ? 1 : -1;
+    return 0;
+  });
+  return sorted;
+});
+
+// แบ่งหน้าข้อมูล
+const paginatedUsers = computed(() => {
+  const start = (page.value - 1) * pageCount.value;
+  const end = start + pageCount.value;
+  return sortedUsers.value.slice(start, end);
+});
+
+// เลือก/ยกเลิกการเลือกแถว
 function select(row) {
   const index = selectedRows.value.findIndex((item) => item.id === row.id);
   if (index === -1) {
@@ -44,102 +184,37 @@ function select(row) {
   }
 }
 
-// กำหนด actions ที่จะแสดงใน Dropdown เมื่อเลือกหลายแถว
-const actions = [
-  [
-    {
-      key: "completed",
-      label: "Completed",
-      icon: "i-heroicons-check",
-    },
-  ],
-  [
-    {
-      key: "uncompleted",
-      label: "In Progress",
-      icon: "i-heroicons-arrow-path",
-    },
-  ],
-];
-
-// ตัวเลือกสำหรับ filter สถานะของ todo
-const todoStatus = [
-  {
-    key: "uncompleted",
-    label: "In Progress",
-    value: false,
-  },
-  {
-    key: "completed",
-    label: "Completed",
-    value: true,
-  },
-];
-
-// สร้างตัวแปร ref สำหรับเก็บค่าการค้นหาและสถานะที่เลือก
-const search = ref("");
-const selectedStatus = ref([]);
-
-// สร้าง computed property สำหรับสร้าง query string ของ filter
-const searchStatus = computed(() => {
-  if (selectedStatus.value?.length === 0) {
-    return "";
-  }
-
-  if (selectedStatus?.value?.length > 1) {
-    return `?completed=${selectedStatus.value[0].value}&completed=${selectedStatus.value[1].value}`;
-  }
-
-  return `?completed=${selectedStatus.value[0].value}`;
-});
-
-// ฟังก์ชันสำหรับ reset filter
+// รีเซ็ตตัวกรองทั้งหมด
 const resetFilters = () => {
   search.value = "";
-  selectedStatus.value = [];
+  selectedStatus.value = "All";
+  selectedRole.value = "All";
+  selectedOrganization.value = "All";
+  selectedColumns.value = columns;
+  pageCount.value = 10;
 };
 
-// กำหนดค่าสำหรับ pagination
-const sort = ref({ column: "id", direction: "asc" as const });
-const page = ref(1);
-const pageCount = ref(10);
-const pageTotal = ref(200); // This value should be dynamic coming from the API
+// อัพเดทหน้าปัจจุบันเมื่อข้อมูลที่กรองเปลี่ยนแปลง
+watch(filteredUsers, () => {
+  page.value = 1;
+});
 
-// สร้าง computed property สำหรับคำนวณช่วงของข้อมูลที่แสดงในแต่ละหน้า
-const pageFrom = computed(() => (page.value - 1) * pageCount.value + 1);
-const pageTo = computed(() =>
-  Math.min(page.value * pageCount.value, pageTotal.value)
-);
+// สร้างตัวเลือกสำหรับ dropdown จากข้อมูลที่มี
+const roleOptions = computed(() => {
+  const roles = new Set(users.value.map((user) => user.role));
+  return [
+    { label: "All", value: "All" },
+    ...Array.from(roles).map((role) => ({ label: role, value: role })),
+  ];
+});
 
-// ดึงข้อมูล todos จาก API โดยใช้ useLazyAsyncData
-const { data: todos, pending } = await useLazyAsyncData<
-  {
-    id: number;
-    title: string;
-    completed: string;
-  }[]
->(
-  "todos",
-  () =>
-    ($fetch as any)(
-      `https://jsonplaceholder.typicode.com/todos${searchStatus.value}`,
-      {
-        query: {
-          q: search.value,
-          _page: page.value,
-          _limit: pageCount.value,
-          _sort: sort.value.column,
-          _order: sort.value.direction,
-        },
-      }
-    ),
-  {
-    // ค่าเริ่มต้นถ้ายังไม่มีข้อมูล
-    default: () => [],
-    // watch การเปลี่ยนแปลงของตัวแปรเหล่านี้เพื่อดึงข้อมูลใหม่
-    watch: [page, search, searchStatus, pageCount, sort],
-  }
-);
+const organizationOptions = computed(() => {
+  const organizations = new Set(users.value.map((user) => user.organization));
+  return [
+    { label: "All", value: "All" },
+    ...Array.from(organizations).map((org) => ({ label: org, value: org })),
+  ];
+});
 </script>
 
 <template>
@@ -157,37 +232,66 @@ const { data: todos, pending } = await useLazyAsyncData<
       footer: { padding: 'p-4' },
     }"
   >
+    <!-- ส่วนหัวของการ์ด -->
     <template #header>
-      <h2
-        class="font-semibold text-xl text-gray-900 dark:text-white leading-tight"
-      >
-        User Management
-      </h2>
+      <div class="flex items-center justify-between">
+        <h2
+          class="font-semibold text-xl text-gray-900 dark:text-white leading-tight"
+        >
+          User Management
+        </h2>
+        <UButton
+          icon="i-heroicons-plus-circle"
+          size="sm"
+          color="primary"
+          variant="solid"
+          label="เพิ่มผู้ใช้"
+          :trailing="false"
+          @click="openAddUserModal"
+        />
+      </div>
     </template>
 
-    <!-- Filters -->
-    <div class="flex items-center justify-between gap-3 px-4 py-3">
+    <!-- ส่วนของตัวกรองและการค้นหา -->
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-3"
+    >
       <UInput
         v-model="search"
         icon="i-heroicons-magnifying-glass-20-solid"
         placeholder="Search..."
-        class="w-80"
+        class="w-full sm:w-80 mb-3 sm:mb-0"
       />
-
-      <USelectMenu
-        v-model="selectedStatus"
-        :options="todoStatus"
-        multiple
-        placeholder="Status"
-        class="w-40"
-      />
+      <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+        <USelect
+          v-model="selectedStatus"
+          :options="[
+            { label: 'All', value: 'All' },
+            { label: 'Active', value: 'Active' },
+            { label: 'Inactive', value: 'Inactive' },
+          ]"
+          placeholder="Status"
+          class="w-full sm:w-40"
+        />
+        <USelect
+          v-model="selectedRole"
+          :options="roleOptions"
+          placeholder="สิทธิ์"
+          class="w-full sm:w-40"
+        />
+        <USelect
+          v-model="selectedOrganization"
+          :options="organizationOptions"
+          placeholder="องค์กร"
+          class="w-full sm:w-40"
+        />
+      </div>
     </div>
 
-    <!-- Header and Action buttons -->
+    <!-- ส่วนของการควบคุมการแสดงผลและการรีเซ็ต -->
     <div class="flex justify-between items-center w-full px-4 py-3">
       <div class="flex items-center gap-1.5">
         <span class="text-sm leading-5">Rows per page:</span>
-
         <USelect
           v-model="pageCount"
           :options="[3, 5, 10, 20, 30, 40]"
@@ -197,21 +301,6 @@ const { data: todos, pending } = await useLazyAsyncData<
       </div>
 
       <div class="flex gap-1.5 items-center">
-        <UDropdown
-          v-if="selectedRows.length > 1"
-          :items="actions"
-          :ui="{ width: 'w-36' }"
-        >
-          <UButton
-            icon="i-heroicons-chevron-down"
-            trailing
-            color="gray"
-            size="xs"
-          >
-            Mark as
-          </UButton>
-        </UDropdown>
-
         <USelectMenu v-model="selectedColumns" :options="columns" multiple>
           <UButton icon="i-heroicons-view-columns" color="gray" size="xs">
             Columns
@@ -222,7 +311,14 @@ const { data: todos, pending } = await useLazyAsyncData<
           icon="i-heroicons-funnel"
           color="gray"
           size="xs"
-          :disabled="search === '' && selectedStatus.length === 0"
+          :disabled="
+            search === '' &&
+            selectedStatus === 'All' &&
+            selectedRole === 'All' &&
+            selectedOrganization === 'All' &&
+            selectedColumns.length === columns.length &&
+            pageCount === 10
+          "
           @click="resetFilters"
         >
           Reset
@@ -230,16 +326,14 @@ const { data: todos, pending } = await useLazyAsyncData<
       </div>
     </div>
 
-    <!-- Table -->
+    <!-- ตารางแสดงข้อมูล -->
     <UTable
       v-model="selectedRows"
       v-model:sort="sort"
-      :rows="todos"
+      :rows="paginatedUsers"
       :columns="columnsTable"
-      :loading="pending"
       sort-asc-icon="i-heroicons-arrow-up"
       sort-desc-icon="i-heroicons-arrow-down"
-      sort-mode="manual"
       class="w-full"
       :ui="{
         td: { base: 'max-w-[0] truncate' },
@@ -247,39 +341,41 @@ const { data: todos, pending } = await useLazyAsyncData<
       }"
       @select="select"
     >
-      <template #completed-data="{ row }">
+      <!-- แสดงสถานะด้วย Badge -->
+      <template #status-data="{ row }">
         <UBadge
           size="xs"
-          :label="row.completed ? 'Completed' : 'In Progress'"
-          :color="row.completed ? 'emerald' : 'orange'"
+          :label="row.status"
+          :color="row.status === 'Active' ? 'emerald' : 'orange'"
           variant="subtle"
         />
       </template>
-
+      <!-- ปุ่มการกระทำสำหรับแต่ละแถว -->
       <template #actions-data="{ row }">
-        <UButton
-          v-if="!row.completed"
-          icon="i-heroicons-check"
-          size="2xs"
-          color="emerald"
-          variant="outline"
-          :ui="{ rounded: 'rounded-full' }"
-          square
-        />
-
-        <UButton
-          v-else
-          icon="i-heroicons-arrow-path"
-          size="2xs"
-          color="orange"
-          variant="outline"
-          :ui="{ rounded: 'rounded-full' }"
-          square
-        />
+        <div class="flex gap-2">
+          <UButton
+            icon="i-heroicons-pencil"
+            size="xs"
+            color="gray"
+            variant="ghost"
+            :ui="{ rounded: 'rounded-full' }"
+            square
+            @click="openEditUserModal(row)"
+          />
+          <UButton
+            icon="i-heroicons-trash"
+            size="xs"
+            color="red"
+            variant="ghost"
+            :ui="{ rounded: 'rounded-full' }"
+            square
+            @click="deleteUser(row.id)"
+          />
+        </div>
       </template>
     </UTable>
 
-    <!-- Number of rows & Pagination -->
+    <!-- ส่วนท้ายของการ์ด แสดงจำนวนผลลัพธ์และการแบ่งหน้า -->
     <template #footer>
       <div class="flex flex-wrap justify-between items-center">
         <div>
@@ -293,7 +389,6 @@ const { data: todos, pending } = await useLazyAsyncData<
             results
           </span>
         </div>
-
         <UPagination
           v-model="page"
           :page-count="pageCount"
@@ -310,5 +405,16 @@ const { data: todos, pending } = await useLazyAsyncData<
         />
       </div>
     </template>
+    <!-- Modal สำหรับเพิ่มผู้ใช้ -->
+    <UserModal
+      v-if="isUserModalOpen"
+      :is-open="isUserModalOpen"
+      :mode="modalMode"
+      :user="editingUser"
+      @close="closeUserModal"
+      @save="saveUser"
+    />
   </UCard>
 </template>
+
+
