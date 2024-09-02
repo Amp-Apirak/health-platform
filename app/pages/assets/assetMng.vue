@@ -403,7 +403,7 @@ watch(selectedProvince, () => {
           size="sm"
           color="primary"
           variant="solid"
-          label="เพิ่มองค์กร"
+          label="เพิ่มอุปกรณ์"
           :trailing="false"
           @click="openAddOrgModal"
         />
