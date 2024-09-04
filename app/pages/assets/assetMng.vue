@@ -7,6 +7,7 @@ const orgs = ref([
   {
     assetID: "A001",
     assetName: "AI Tracker 1",
+    assetGroup: "G001",
     assetType: "Health Sensor",
     manufacturer: "GE Healthcare",
     model: "LOGIQ E10",
@@ -26,6 +27,7 @@ const orgs = ref([
     building: "A",
     floor: "1",
     owner: "Radiology Department",
+    date: "21/08/2567 08.32",
   },
   {
     assetID: "A002",
@@ -49,6 +51,7 @@ const orgs = ref([
     building: "B",
     floor: "2",
     owner: "Radiology Department",
+    date: "21/08/2567 08.32",
   },
   {
     assetID: "A003",
@@ -72,6 +75,7 @@ const orgs = ref([
     building: "B",
     floor: "2",
     owner: "Radiology Department",
+    date: "21/08/2567 08.32",
   },
   {
     assetID: "A004",
@@ -95,6 +99,7 @@ const orgs = ref([
     building: "A",
     floor: "1",
     owner: "Radiology Department",
+    date: "21/08/2567 08.32",
   },
   {
     assetID: "A005",
@@ -118,6 +123,7 @@ const orgs = ref([
     building: "C",
     floor: "1",
     owner: "Emergency Department",
+    date: "21/08/2567 08.32",
   },
   {
     assetID: "A006",
@@ -141,6 +147,7 @@ const orgs = ref([
     building: "C",
     floor: "3",
     owner: "Intensive Care Unit",
+    date: "21/08/2567 08.32",
   },
   {
     assetID: "A007",
@@ -164,6 +171,7 @@ const orgs = ref([
     building: "D",
     floor: "3",
     owner: "General Surgery Department",
+    date: "21/08/2567 08.32",
   },
 ]);
 
