@@ -246,11 +246,11 @@ const links = [
         label: "Weather temperature",
         to: "/environment/weather",
         children: [
-          {
-            label: "Dashboard",
-            to: "/environment/weatherDash",
-            exact: true,
-          },
+          // {
+          //   label: "Dashboard",
+          //   to: "/environment/weatherDash",
+          //   exact: true,
+          // },
           {
             label: "Monitoring",
             to: "/environment/weatherMonitoring",

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import DatePicker from "~/components/DatePicker.vue";
-import WeatherTemp from "~/components/environment/graphMonitoring/weatherTemp.vue";
-import WeatherStatusA from "~/components/environment/graphMonitoring/weatherStatusA.vue";
+import WeatherTemp from "~/components/environment/graphMonitoring/WeatherTemp.vue";
+import WeatherStatusA from "~/components/environment/graphMonitoring/WeatherStatusA.vue";
+import WeatherStatusB from "~/components/environment/graphMonitoring/WeatherStatusB.vue";
+import WeatherStatusC from "~/components/environment/graphMonitoring/WeatherStatusC.vue";
+import WeatherChart from "~/components/environment/graphMonitoring/WeatherChart.vue";
 
 const { isNotificationsSlideoverOpen } = useDashboard();
 
@@ -38,6 +41,9 @@ const deviceOptions = ref([
   { label: "เครื่องวัดอุณภูมิ-001-ORG02", value: "B" },
   // เพิ่มตัวเลือกอื่นๆ ตามต้องการ
 ]);
+
+// กำหนดค่า period สำหรับ HomeChart (ตัวอย่าง)
+const period = ref("monthly"); // หรือค่าที่เหมาะสมตามลอจิกของคุณ
 </script>
 
 <template>
@@ -85,16 +91,16 @@ const deviceOptions = ref([
           <WeatherTemp />
         </div>
         <div class="grid lg:grid-cols-3 lg:items-start gap-8 mt-8 mb-8">
-          <!-- ~/components/home/HomeSales.vue -->
+          <!-- ~/components/environment/graphMonitoring/WeatherStatusA.vue -->
           <WeatherStatusA />
-          <!-- ~/components/home/HomeCountries.vue -->
-          <HomeCountries />
-          <!-- ~/components/home/HomeCountries.vue -->
-          <HomeCountries />
+          <!-- ~/components/environment/graphMonitoring/WeatherStatusB.vue -->
+          <WeatherStatusB />
+          <!-- ~/components/environment/graphMonitoring/WeatherStatusC.vue -->
+          <WeatherStatusC />
         </div>
 
         <!-- ~/components/home/HomeChart.vue -->
-        <HomeChart :period="period" :range="selectedDate" />
+        <WeatherChart :period="somePeriod" :range="selectedDate" />
       </UDashboardPanelContent>
     </UDashboardPanel>
   </UDashboardPage>

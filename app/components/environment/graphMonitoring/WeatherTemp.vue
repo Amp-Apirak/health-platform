@@ -50,9 +50,9 @@ const details = ref([
     :class="['text-white', weatherInfo.backgroundColor, 'p-6 overflow-hidden']"
     style="min-height: 200px"
   >
-    <div class="flex h-full">
+    <div class="flex flex-col sm:flex-row h-full"> 
       <!-- Column 1: Icon and Temperature -->
-      <div class="flex-1 flex items-center">
+      <div class="flex-1 flex items-center sm:w-1/3">
         <UIcon :name="weatherInfo.icon" class="w-16 h-16 mr-2 text-white" />
         <div class="text-8xl font-bold">
           {{ temperature }}<span class="align-top text-4xl">°C</span>
@@ -60,7 +60,7 @@ const details = ref([
       </div>
 
       <!-- Column 2: Warning and Advice -->
-      <div class="flex-1 flex flex-col justify-center">
+      <div class="flex-1 flex flex-col justify-center sm:w-1/3">
         <div class="text-3xl font-semibold mb-2">
           แจ้งเตือน: {{ weatherInfo.level }}
         </div>
@@ -68,7 +68,7 @@ const details = ref([
       </div>
 
       <!-- Column 3: Details -->
-      <div class="flex-1 flex flex-col justify-center items-end">
+      <div class="flex-1 flex flex-col justify-center items-end sm:w-1/3">
         <div
           v-for="(item, index) in details"
           :key="index"
