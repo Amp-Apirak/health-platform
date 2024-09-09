@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import OrgModal from "~/components/AssetInventory/PopupAsset.vue";
+import AssetModal from "~/components/AssetInventory/PopupAsset.vue";
 
 // ข้อมูลขององค์กรต่าง ๆ
-const orgs = ref([
+const assets = ref([
   {
     assetID: "A001",
     assetName: "AI Tracker 1",
@@ -22,7 +22,7 @@ const orgs = ref([
     firmware: "v1.2.3",
     lastMaintenanceDate: "2024-05-12",
     maintenanceDate: "2024-11-12",
-    organization: "สำนักงานตำรวจแห่งชาติ",
+    assetanization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "A",
     floor: "1",
@@ -32,6 +32,7 @@ const orgs = ref([
   {
     assetID: "A002",
     assetName: "AI Tracker 2",
+    assetGroup: "",
     assetType: "Health Sensor",
     manufacturer: "Siemens Healthineers",
     model: "MAGNETOM Sola",
@@ -46,7 +47,7 @@ const orgs = ref([
     firmware: "v2.1.0",
     lastMaintenanceDate: "2024-03-18",
     maintenanceDate: "2024-09-18",
-    organization: "สำนักงานตำรวจแห่งชาติ",
+    assetanization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "B",
     floor: "2",
@@ -56,6 +57,7 @@ const orgs = ref([
   {
     assetID: "A003",
     assetName: "CT Scanner",
+    assetGroup: "G002",
     assetType: "Health Sensor",
     manufacturer: "Philips",
     model: "Ingenuity CT",
@@ -70,7 +72,7 @@ const orgs = ref([
     firmware: "v3.0.1",
     lastMaintenanceDate: "2024-02-22",
     maintenanceDate: "2024-08-22",
-    organization: "สำนักงานตำรวจแห่งชาติ",
+    assetanization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "B",
     floor: "2",
@@ -80,6 +82,7 @@ const orgs = ref([
   {
     assetID: "A004",
     assetName: "X-Ray Machine",
+    assetGroup: "",
     assetType: "Health Sensor",
     manufacturer: "Canon Medical",
     model: "Radrex-i",
@@ -94,7 +97,7 @@ const orgs = ref([
     firmware: "v1.5.0",
     lastMaintenanceDate: "2023-12-10",
     maintenanceDate: "2024-06-10",
-    organization: "สำนักงานตำรวจแห่งชาติ",
+    assetanization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "A",
     floor: "1",
@@ -104,6 +107,7 @@ const orgs = ref([
   {
     assetID: "A005",
     assetName: "Defibrillator",
+    assetGroup: "",
     assetType: "Environment Sensor",
     manufacturer: "Zoll",
     model: "AED Plus",
@@ -118,7 +122,7 @@ const orgs = ref([
     firmware: "v2.3.5",
     lastMaintenanceDate: "2023-11-25",
     maintenanceDate: "2024-05-25",
-    organization: "สำนักงานตำรวจแห่งชาติ",
+    assetanization: "สำนักงานตำรวจแห่งชาติ",
     location: "Emergency Room",
     building: "C",
     floor: "1",
@@ -128,6 +132,7 @@ const orgs = ref([
   {
     assetID: "A006",
     assetName: "Ventilator",
+    assetGroup: "G003",
     assetType: "Environment Sensor",
     manufacturer: "Dräger",
     model: "Evita Infinity V500",
@@ -142,7 +147,7 @@ const orgs = ref([
     firmware: "v1.9.7",
     lastMaintenanceDate: "2024-04-15",
     maintenanceDate: "2024-10-15",
-    organization: "สำนักงานตำรวจแห่งชาติ",
+    assetanization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "C",
     floor: "3",
@@ -152,6 +157,7 @@ const orgs = ref([
   {
     assetID: "A007",
     assetName: "Infusion Pump",
+    assetGroup: "",
     assetType: "Environment Sensor",
     manufacturer: "Baxter",
     model: "Sigma Spectrum",
@@ -166,7 +172,7 @@ const orgs = ref([
     firmware: "v3.4.2",
     lastMaintenanceDate: "2024-01-12",
     maintenanceDate: "2024-07-12",
-    organization: "สำนักงานตำรวจแห่งชาติ",
+    assetanization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "D",
     floor: "3",
@@ -176,69 +182,70 @@ const orgs = ref([
 ]);
 
 // สถานะของ Modal
-const isOrgModalOpen = ref(false);
+const isAssetModalOpen = ref(false);
 const modalMode = ref("add");
-const editingOrg = ref(null);
+const editingAsset = ref(null);
 
 // เปิด Modal สำหรับเพิ่มองค์กร
-const openAddOrgModal = () => {
+const openAddAssetModal = () => {
   modalMode.value = "add";
-  editingOrg.value = null;
-  isOrgModalOpen.value = true;
+  editingAsset.value = null;
+  isAssetModalOpen.value = true;
 };
 
-// เปิด Modal สำหรับแก้ไของค์กร
-const openEditOrgModal = (org) => {
+// เปิด Modal สำหรับแก้ไขอุปกรณ์
+const openEditAssetModal = (asset) => {
   modalMode.value = "edit";
-  editingOrg.value = { ...org };
-  isOrgModalOpen.value = true;
+  editingAsset.value = { ...asset };
+  isAssetModalOpen.value = true;
 };
 
-// บันทึกข้อมูลองค์กร
-const saveOrg = (orgData) => {
+// บันทึกข้อมูลอุปกรณ์
+const saveAsset = (assetData) => {
   if (modalMode.value === "add") {
-    addOrg(orgData);
+    addAsset(assetData);
   } else {
-    editOrg(orgData);
+    editAsset(assetData);
   }
-  closeOrgModal();
+  closeAssetModal();
 };
 
 // ปิด Modal
-const closeOrgModal = () => {
-  isOrgModalOpen.value = false;
-  editingOrg.value = null;
+const closeAssetModal = () => {
+  isAssetModalOpen.value = false;
+  editingAsset.value = null;
 };
 
-// เพิ่มองค์กรใหม่
-const addOrg = (newOrg) => {
-  newOrg.no = orgs.value.length + 1;
-  newOrg.date = new Date().toLocaleDateString("th-TH", {
+// เพิ่มอุปกรณ์
+const addAsset = (newAsset) => {
+  newAsset.assetID = `A${(assets.value.length + 1).toString().padStart(3, '0')}`;
+  newAsset.date = new Date().toLocaleDateString("th-TH", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
   });
-  orgs.value.push(newOrg);
+  assets.value.push(newAsset);
 };
 
-// แก้ไขข้อมูลองค์กร
-const editOrg = (updatedOrg) => {
-  const index = orgs.value.findIndex((org) => org.no === updatedOrg.no);
+// แก้ไขข้อมูลอุปกรณ์
+const editAsset = (updatedAsset) => {
+  const index = assets.value.findIndex((asset) => asset.assetID === updatedAsset.assetID);
   if (index !== -1) {
-    orgs.value[index] = updatedOrg;
+    assets.value[index] = updatedAsset;
   }
 };
 
-// ลบองค์กร
-const deleteOrg = (orgNo) => {
-  orgs.value = orgs.value.filter((org) => org.no !== orgNo);
+// ลบอุปกรณ์
+const deleteAsset = (assetID) => {
+  assets.value = assets.value.filter((asset) => asset.assetID !== assetID);
 };
 
 // กำหนดโครงสร้างของคอลัมน์ในตาราง
 const columns = [
   { key: "assetID", label: "Asset ID", sortable: true },
+  { key: "assetGroup", label: "Asset Group", sortable: true },
   { key: "assetName", label: "Asset Name", sortable: true },
   { key: "assetType", label: "Asset Type", sortable: true },
   { key: "serialNumber", label: "Serial Number", sortable: true },
@@ -257,15 +264,14 @@ const columnsTable = computed(() =>
 
 // ค่าสำหรับการค้นหาและกรอง
 const search = ref("");
-const selectedLevel = ref("All");
-const selectedProvince = ref("All");
-const selectedDistrict = ref("All");
+const selectedType = ref("All");
+const selectedStatus = ref("All");
 
 // การจัดเรียงและการแบ่งหน้า
-const sort = ref({ column: "no", direction: "asc" });
+const sort = ref({ column: "assetID", direction: "asc" });
 const page = ref(1);
 const pageCount = ref(10);
-const pageTotal = computed(() => filteredOrgs.value.length);
+const pageTotal = computed(() => filteredAssets.value.length);
 
 // คำนวณช่วงของข้อมูลที่แสดงในแต่ละหน้า
 const pageFrom = computed(() => (page.value - 1) * pageCount.value + 1);
@@ -274,35 +280,28 @@ const pageTo = computed(() =>
 );
 
 // กรองข้อมูลตามเงื่อนไขที่กำหนด
-const filteredOrgs = computed(() => {
-  let filtered = orgs.value;
+const filteredAssets = computed(() => {
+  let filtered = assets.value;
   if (search.value) {
     const searchLower = search.value.toLowerCase();
-    filtered = filtered.filter((org) =>
-      Object.values(org).some((val) =>
+    filtered = filtered.filter((asset) =>
+      Object.values(asset).some((val) =>
         val.toString().toLowerCase().includes(searchLower)
       )
     );
   }
-  if (selectedLevel.value !== "All") {
-    filtered = filtered.filter((org) => org.level === selectedLevel.value);
+  if (selectedType.value !== "All") {
+    filtered = filtered.filter((asset) => asset.assetType === selectedType.value);
   }
-  if (selectedProvince.value !== "All") {
-    filtered = filtered.filter(
-      (org) => org.province === selectedProvince.value
-    );
-  }
-  if (selectedDistrict.value !== "All") {
-    filtered = filtered.filter(
-      (org) => org.district === selectedDistrict.value
-    );
+  if (selectedStatus.value !== "All") {
+    filtered = filtered.filter((asset) => asset.status === selectedStatus.value);
   }
   return filtered;
 });
 
 // จัดเรียงข้อมูลตามคอลัมน์ที่เลือก
-const sortedOrgs = computed(() => {
-  const sorted = [...filteredOrgs.value];
+const sortedAssets = computed(() => {
+  const sorted = [...filteredAssets.value];
   sorted.sort((a, b) => {
     if (a[sort.value.column] < b[sort.value.column])
       return sort.value.direction === "asc" ? -1 : 1;
@@ -314,72 +313,42 @@ const sortedOrgs = computed(() => {
 });
 
 // แบ่งหน้าข้อมูล
-const paginatedOrgs = computed(() => {
+const paginatedAssets = computed(() => {
   const start = (page.value - 1) * pageCount.value;
   const end = start + pageCount.value;
-  return sortedOrgs.value.slice(start, end);
+  return sortedAssets.value.slice(start, end);
 });
 
 // รีเซ็ตตัวกรองทั้งหมด
 const resetFilters = () => {
   search.value = "";
-  selectedLevel.value = "All";
-  selectedProvince.value = "All";
-  selectedDistrict.value = "All";
+  selectedType.value = "All";
+  selectedStatus.value = "All";
   selectedColumns.value = columns;
   pageCount.value = 10;
 };
 
 // อัพเดทหน้าปัจจุบันเมื่อข้อมูลที่กรองเปลี่ยนแปลง
-watch(filteredOrgs, () => {
+watch(filteredAssets, () => {
   page.value = 1;
 });
 
-// สร้างตัวเลือกสำหรับ dropdown ระดับองค์กร
-const levelOptions = computed(() => {
-  const levels = new Set(orgs.value.map((org) => org.level));
+// สร้างตัวเลือกสำหรับ dropdown ประเภทอุปกรณ์
+const typeOptions = computed(() => {
+  const types = new Set(assets.value.map((asset) => asset.assetType));
   return [
     { label: "All", value: "All" },
-    ...Array.from(levels).map((level) => ({ label: level, value: level })),
+    ...Array.from(types).map((type) => ({ label: type, value: type })),
   ];
 });
 
-// สร้างตัวเลือกสำหรับ dropdown จังหวัด
-const provinceOptions = computed(() => {
-  const provinces = new Set(orgs.value.map((org) => org.province));
+// สร้างตัวเลือกสำหรับ dropdown สถานะ
+const statusOptions = computed(() => {
+  const statuses = new Set(assets.value.map((asset) => asset.status));
   return [
     { label: "All", value: "All" },
-    ...Array.from(provinces).map((province) => ({
-      label: province,
-      value: province,
-    })),
+    ...Array.from(statuses).map((status) => ({ label: status, value: status })),
   ];
-});
-
-// สร้างตัวเลือกสำหรับ dropdown อำเภอ
-const districtOptions = computed(() => {
-  let districts;
-  if (selectedProvince.value === "All") {
-    districts = new Set(orgs.value.map((org) => org.district));
-  } else {
-    districts = new Set(
-      orgs.value
-        .filter((org) => org.province === selectedProvince.value)
-        .map((org) => org.district)
-    );
-  }
-  return [
-    { label: "All", value: "All" },
-    ...Array.from(districts).map((district) => ({
-      label: district,
-      value: district,
-    })),
-  ];
-});
-
-// รีเซ็ตอำเภอเมื่อเปลี่ยนจังหวัด
-watch(selectedProvince, () => {
-  selectedDistrict.value = "All";
 });
 </script>
 
@@ -413,7 +382,7 @@ watch(selectedProvince, () => {
           variant="solid"
           label="เพิ่มอุปกรณ์"
           :trailing="false"
-          @click="openAddOrgModal"
+          @click="openAddAssetModal"
         />
       </div>
     </template>
@@ -430,21 +399,15 @@ watch(selectedProvince, () => {
       />
       <div class="flex flex-wrap gap-2 w-full sm:w-auto">
         <USelect
-          v-model="selectedLevel"
-          :options="levelOptions"
-          placeholder="ระดับองค์กร"
+          v-model="selectedType"
+          :options="typeOptions"
+          placeholder="ประเภทอุปกรณ์"
           class="w-full sm:w-40"
         />
         <USelect
-          v-model="selectedProvince"
-          :options="provinceOptions"
-          placeholder="จังหวัด"
-          class="w-full sm:w-40"
-        />
-        <USelect
-          v-model="selectedDistrict"
-          :options="districtOptions"
-          placeholder="อำเภอ"
+          v-model="selectedStatus"
+          :options="statusOptions"
+          placeholder="สถานะ"
           class="w-full sm:w-40"
         />
       </div>
@@ -474,7 +437,8 @@ watch(selectedProvince, () => {
           size="xs"
           :disabled="
             search === '' &&
-            selectedLevel === 'All' &&
+            selectedType === 'All' &&
+            selectedStatus === 'All' &&
             selectedColumns.length === columns.length &&
             pageCount === 10
           "
@@ -488,7 +452,7 @@ watch(selectedProvince, () => {
     <!-- ตารางแสดงข้อมูล -->
     <UTable
       v-model:sort="sort"
-      :rows="paginatedOrgs"
+      :rows="paginatedAssets"
       :columns="columnsTable"
       sort-asc-icon="i-heroicons-arrow-up"
       sort-desc-icon="i-heroicons-arrow-down"
@@ -507,7 +471,7 @@ watch(selectedProvince, () => {
             variant="ghost"
             :ui="{ rounded: 'rounded-full' }"
             square
-            @click="openEditOrgModal(row)"
+            @click="openEditAssetModal(row)"
           />
           <UButton
             icon="i-heroicons-trash"
@@ -516,7 +480,7 @@ watch(selectedProvince, () => {
             variant="ghost"
             :ui="{ rounded: 'rounded-full' }"
             square
-            @click="deleteOrg(row.no)"
+            @click="deleteAsset(row.assetID)"
           />
         </div>
       </template>
@@ -553,14 +517,14 @@ watch(selectedProvince, () => {
       </div>
     </template>
 
-    <!-- Modal สำหรับเพิ่ม/แก้ไของค์กร -->
-    <OrgModal
-      v-if="isOrgModalOpen"
-      :is-open="isOrgModalOpen"
+    <!-- Modal สำหรับเพิ่ม/แก้ไขอุปกรณ์ -->
+    <AssetModal
+      v-if="isAssetModalOpen"
+      :is-open="isAssetModalOpen"
       :mode="modalMode"
-      :org="editingOrg"
-      @close="closeOrgModal"
-      @save="saveOrg"
+      :asset="editingAsset"
+      @close="closeAssetModal"
+      @save="saveAsset"
     />
   </UCard>
 </template>
