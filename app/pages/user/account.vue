@@ -70,8 +70,11 @@ const closeUserModal = () => {
 
 // เพิ่มผู้ใช้ใหม่
 const addUser = (newUser) => {
-  newUser.id = users.value.length + 1; // สร้าง ID ใหม่
-  newUser.createdAt = new Date().toISOString().split("T")[0]; // วันที่ปัจจุบัน
+  newUser.id = users.value.length + 1;
+  newUser.createdAt = new Date().toISOString().split("T")[0];
+  // ทำการเข้ารหัสรหัสผ่านก่อนบันทึก (ในสถานการณ์จริงควรทำที่ backend)
+  // newUser.password = hashPassword(newUser.password);
+  delete newUser.confirmPassword; // ลบ confirmPassword ออกก่อนบันทึก
   users.value.push(newUser);
   closeUserModal();
 };

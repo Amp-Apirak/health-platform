@@ -26,7 +26,24 @@ const emit = defineEmits(["close", "save"]); // กำหนดอีเวน�
 
 // สร้าง ref สำหรับควบคุมสถานะของ Modal
 const isModalOpen = ref(props.isOpen); // เก็บสถานะการเปิด/ปิดของ Modal
-const userForm = ref({ ...props.user }); // กำหนดข้อมูลฟอร์มผู้ใช้ที่สามารถแก้ไขได้
+const userForm = ref({ ...props.user, password: "", confirmPassword: "" }); // กำหนดข้อมูลฟอร์มผู้ใช้ที่สามารถแก้ไขได้
+
+// ฟังก์ชันตรวจสอบรหัสผ่าน:
+const validatePasswords = () => {
+  if (userForm.value.password !== userForm.value.confirmPassword) {
+    alert("Passwords do not match!");
+    return false;
+  }
+  return true;
+};
+
+// เงื่อนไขตรวจสอบ password และ confirmPassword ตรงกัน
+const passwordsMatch = computed(() => {
+  return (
+    userForm.value.password === userForm.value.confirmPassword ||
+    "Passwords do not match"
+  );
+});
 
 // ตัวเลือกสำหรับ dropdown องค์กร
 const organizationOptions = [
@@ -50,7 +67,21 @@ const roleOptions = [
 
 // ฟังก์ชันสำหรับส่งข้อมูลเมื่อผู้ใช้กดปุ่มบันทึก
 const submitForm = () => {
-  emit("save", userForm.value); // ส่งข้อมูลฟอร์มกลับไปยัง parent component
+  if (props.mode === "add") {
+    if (userForm.value.password !== userForm.value.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    if (!userForm.value.password) {
+      alert("Password is required!");
+      return;
+    }
+  }
+
+  const formData = { ...userForm.value };
+  delete formData.confirmPassword; // ไม่ส่ง confirmPassword ไปยัง parent component
+
+  emit("save", formData);
 };
 
 // ฟังก์ชันสำหรับอัพเดทข้อมูลฟอร์มเมื่อมีการเปลี่ยนแปลงผู้ใช้ที่กำลังแก้ไข
@@ -91,6 +122,11 @@ onMounted(() => {
     updateUserForm(props.user); // ถ้าอยู่ในโหมดแก้ไข ให้เรียกฟังก์ชัน updateUserForm
   }
 });
+
+// ฟังก์ชันปิด Modal
+const closeModal = () => {
+  emit("close");
+};
 </script>
 <template>
   <UModal
@@ -118,18 +154,29 @@ onMounted(() => {
     <UCard :ui="{ base: 'w-full' }">
       <!-- ส่วนหัวของ Modal -->
       <template #header>
-        <div class="flex items-center gap-2">
-          <UIcon
-            :name="
-              mode === 'add' ? 'i-heroicons-plus-circle' : 'i-heroicons-pencil'
-            "
-            class="w-6 h-6"
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <UIcon
+              :name="
+                mode === 'add'
+                  ? 'i-heroicons-plus-circle'
+                  : 'i-heroicons-pencil'
+              "
+              class="w-6 h-6"
+            />
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              {{ mode === "add" ? "เพิ่มผู้ใช้งานระบบ" : "แก้ไขข้อมูลผู้ใช้" }}
+            </h3>
+          </div>
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-x-mark-20-solid"
+            class="-my-1"
+            @click="closeModal"
           />
-          <h3
-            class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-          >
-            {{ mode === "add" ? "เพิ่มผู้ใช้งานระบบ" : "แก้ไขข้อมูลผู้ใช้" }}
-          </h3>
         </div>
       </template>
 
@@ -172,8 +219,34 @@ onMounted(() => {
               placeholder="เลือกสถานะ"
             />
           </UFormGroup>
-        </div>
 
+          <!-- เพิ่มหลังจากช่องกรอกชื่อผู้ใช้ -->
+          <UFormGroup label="รหัสผ่าน" v-if="mode === 'add'">
+            <UInput
+              v-model="userForm.password"
+              type="password"
+              placeholder="กรอกรหัสผ่าน"
+            />
+          </UFormGroup>
+
+          <UFormGroup
+            label="ยืนยันรหัสผ่าน"
+            v-if="mode === 'add'"
+            :error="
+              userForm.password &&
+              userForm.confirmPassword &&
+              passwordsMatch !== true
+                ? passwordsMatch
+                : undefined
+            "
+          >
+            <UInput
+              v-model="userForm.confirmPassword"
+              type="password"
+              placeholder="ยืนยันรหัสผ่าน"
+            />
+          </UFormGroup>
+        </div>
         <!-- ปุ่มดำเนินการ -->
         <div class="mt-6 flex items-center justify-end gap-x-6">
           <UButton

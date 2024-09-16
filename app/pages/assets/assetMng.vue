@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import AssetModal from "~/components/AssetInventory/PopupAsset.vue";
 
-// ข้อมูลขององค์กรต่าง ๆ
+/// ข้อมูลขององค์กรต่าง ๆ
 const assets = ref([
   {
     assetID: "A001",
@@ -10,49 +10,49 @@ const assets = ref([
     assetGroup: "G001",
     assetType: "Health Sensor",
     manufacturer: "GE Healthcare",
+    brand: "GE",
     model: "LOGIQ E10",
     serialNumber: "GE12345678",
     location: "Room 101",
-    InstallationDate: "2023-01-15",
     warranty: "3 years",
+    dateWarranty: "2023-01-15",
     expirationDate: "2026-01-15",
     status: "Active",
     ipAddress: "192.168.1.10",
     macAddress: "00:1A:2B:3C:4D:5E",
     firmware: "v1.2.3",
-    lastMaintenanceDate: "2024-05-12",
-    maintenanceDate: "2024-11-12",
-    assetanization: "สำนักงานตำรวจแห่งชาติ",
+    organization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "A",
     floor: "1",
     owner: "Radiology Department",
-    date: "21/08/2567 08.32",
+    assetsImage: "image1.jpg",
+    dateCreated: "21/08/2567 08.32",
   },
   {
     assetID: "A002",
     assetName: "AI Tracker 2",
-    assetGroup: "",
+    assetGroup: "G001",
     assetType: "Health Sensor",
     manufacturer: "Siemens Healthineers",
+    brand: "Siemens",
     model: "MAGNETOM Sola",
     serialNumber: "SI67891234",
     location: "Room 102",
-    InstallationDate: "2022-06-20",
     warranty: "5 years",
+    dateWarranty: "2022-06-20",
     expirationDate: "2027-06-20",
     status: "Active",
     ipAddress: "192.168.1.11",
     macAddress: "00:1A:2B:3C:4D:5F",
     firmware: "v2.1.0",
-    lastMaintenanceDate: "2024-03-18",
-    maintenanceDate: "2024-09-18",
-    assetanization: "สำนักงานตำรวจแห่งชาติ",
+    organization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "B",
     floor: "2",
     owner: "Radiology Department",
-    date: "21/08/2567 08.32",
+    assetsImage: "image2.jpg",
+    dateCreated: "21/08/2567 08.32",
   },
   {
     assetID: "A003",
@@ -60,74 +60,74 @@ const assets = ref([
     assetGroup: "G002",
     assetType: "Health Sensor",
     manufacturer: "Philips",
+    brand: "Philips",
     model: "Ingenuity CT",
     serialNumber: "PH34567891",
     location: "Room 103",
-    InstallationDate: "2021-11-10",
     warranty: "4 years",
+    dateWarranty: "2021-11-10",
     expirationDate: "2025-11-10",
     status: "Active",
     ipAddress: "192.168.1.12",
     macAddress: "00:1A:2B:3C:4D:60",
     firmware: "v3.0.1",
-    lastMaintenanceDate: "2024-02-22",
-    maintenanceDate: "2024-08-22",
-    assetanization: "สำนักงานตำรวจแห่งชาติ",
+    organization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "B",
     floor: "2",
     owner: "Radiology Department",
-    date: "21/08/2567 08.32",
+    assetsImage: "image3.jpg",
+    dateCreated: "21/08/2567 08.32",
   },
   {
     assetID: "A004",
     assetName: "X-Ray Machine",
-    assetGroup: "",
+    assetGroup: "G002",
     assetType: "Health Sensor",
     manufacturer: "Canon Medical",
+    brand: "Canon",
     model: "Radrex-i",
     serialNumber: "CA09876543",
     location: "Room 104",
-    InstallationDate: "2020-08-05",
     warranty: "5 years",
+    dateWarranty: "2020-08-05",
     expirationDate: "2025-08-05",
     status: "Active",
     ipAddress: "192.168.1.13",
     macAddress: "00:1A:2B:3C:4D:61",
     firmware: "v1.5.0",
-    lastMaintenanceDate: "2023-12-10",
-    maintenanceDate: "2024-06-10",
-    assetanization: "สำนักงานตำรวจแห่งชาติ",
+    organization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "A",
     floor: "1",
     owner: "Radiology Department",
-    date: "21/08/2567 08.32",
+    assetsImage: "image4.jpg",
+    dateCreated: "21/08/2567 08.32",
   },
   {
     assetID: "A005",
     assetName: "Defibrillator",
-    assetGroup: "",
+    assetGroup: "G003",
     assetType: "Environment Sensor",
     manufacturer: "Zoll",
+    brand: "Zoll",
     model: "AED Plus",
     serialNumber: "ZL12345009",
     location: "Room 105",
-    InstallationDate: "2019-02-12",
     warranty: "3 years",
+    dateWarranty: "2019-02-12",
     expirationDate: "2022-02-12",
     status: "Inactive",
     ipAddress: "192.168.1.14",
     macAddress: "00:1A:2B:3C:4D:62",
     firmware: "v2.3.5",
-    lastMaintenanceDate: "2023-11-25",
-    maintenanceDate: "2024-05-25",
-    assetanization: "สำนักงานตำรวจแห่งชาติ",
+    organization: "สำนักงานตำรวจแห่งชาติ",
     location: "Emergency Room",
     building: "C",
     floor: "1",
     owner: "Emergency Department",
-    date: "21/08/2567 08.32",
+    assetsImage: "image5.jpg",
+    dateCreated: "21/08/2567 08.32",
   },
   {
     assetID: "A006",
@@ -135,49 +135,74 @@ const assets = ref([
     assetGroup: "G003",
     assetType: "Environment Sensor",
     manufacturer: "Dräger",
+    brand: "Dräger",
     model: "Evita Infinity V500",
     serialNumber: "DR56789012",
     location: "ICU",
-    InstallationDate: "2021-03-18",
     warranty: "5 years",
+    dateWarranty: "2021-03-18",
     expirationDate: "2026-03-18",
     status: "Active",
     ipAddress: "192.168.1.15",
     macAddress: "00:1A:2B:3C:4D:63",
     firmware: "v1.9.7",
-    lastMaintenanceDate: "2024-04-15",
-    maintenanceDate: "2024-10-15",
-    assetanization: "สำนักงานตำรวจแห่งชาติ",
+    organization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "C",
     floor: "3",
     owner: "Intensive Care Unit",
-    date: "21/08/2567 08.32",
+    assetsImage: "image6.jpg",
+    dateCreated: "21/08/2567 08.32",
   },
   {
     assetID: "A007",
     assetName: "Infusion Pump",
-    assetGroup: "",
+    assetGroup: "G004",
     assetType: "Environment Sensor",
     manufacturer: "Baxter",
+    brand: "Baxter",
     model: "Sigma Spectrum",
     serialNumber: "BA10293847",
     location: "Ward 3A",
-    InstallationDate: "2020-12-22",
     warranty: "4 years",
+    dateWarranty: "2020-12-22",
     expirationDate: "2024-12-22",
     status: "Active",
     ipAddress: "192.168.1.16",
     macAddress: "00:1A:2B:3C:4D:64",
     firmware: "v3.4.2",
-    lastMaintenanceDate: "2024-01-12",
-    maintenanceDate: "2024-07-12",
-    assetanization: "สำนักงานตำรวจแห่งชาติ",
+    organization: "สำนักงานตำรวจแห่งชาติ",
     location: "Main Building",
     building: "D",
     floor: "3",
     owner: "General Surgery Department",
-    date: "21/08/2567 08.32",
+    assetsImage: "image7.jpg",
+    dateCreated: "21/08/2567 08.32",
+  },
+  {
+    assetID: "A008",
+    assetName: "Ultrasound Machine",
+    assetGroup: "G005",
+    assetType: "Health Sensor",
+    manufacturer: "Hitachi",
+    brand: "Hitachi",
+    model: "ARIETTA 850",
+    serialNumber: "HT56781234",
+    location: "Room 106",
+    warranty: "4 years",
+    dateWarranty: "2022-01-10",
+    expirationDate: "2026-01-10",
+    status: "Active",
+    ipAddress: "192.168.1.17",
+    macAddress: "00:1A:2B:3C:4D:65",
+    firmware: "v2.0.0",
+    organization: "สำนักงานตำรวจแห่งชาติ",
+    location: "Main Building",
+    building: "D",
+    floor: "2",
+    owner: "Radiology Department",
+    assetsImage: "image8.jpg",
+    dateCreated: "21/08/2567 08.32",
   },
 ]);
 
@@ -218,7 +243,9 @@ const closeAssetModal = () => {
 
 // เพิ่มอุปกรณ์
 const addAsset = (newAsset) => {
-  newAsset.assetID = `A${(assets.value.length + 1).toString().padStart(3, '0')}`;
+  newAsset.assetID = `A${(assets.value.length + 1)
+    .toString()
+    .padStart(3, "0")}`;
   newAsset.date = new Date().toLocaleDateString("th-TH", {
     year: "numeric",
     month: "2-digit",
@@ -228,10 +255,11 @@ const addAsset = (newAsset) => {
   });
   assets.value.push(newAsset);
 };
-
 // แก้ไขข้อมูลอุปกรณ์
 const editAsset = (updatedAsset) => {
-  const index = assets.value.findIndex((asset) => asset.assetID === updatedAsset.assetID);
+  const index = assets.value.findIndex(
+    (asset) => asset.assetID === updatedAsset.assetID
+  );
   if (index !== -1) {
     assets.value[index] = updatedAsset;
   }
@@ -252,7 +280,7 @@ const columns = [
   { key: "organization", label: "Organization", sortable: true },
   { key: "owner", label: "Owner", sortable: true },
   { key: "status", label: "Status", sortable: true },
-  { key: "date", label: "วันที่สร้าง", sortable: true },
+  { key: "dateCreated", label: "วันที่สร้าง", sortable: true },
   { key: "actions", label: "Actions", sortable: false },
 ];
 
@@ -291,10 +319,14 @@ const filteredAssets = computed(() => {
     );
   }
   if (selectedType.value !== "All") {
-    filtered = filtered.filter((asset) => asset.assetType === selectedType.value);
+    filtered = filtered.filter(
+      (asset) => asset.assetType === selectedType.value
+    );
   }
   if (selectedStatus.value !== "All") {
-    filtered = filtered.filter((asset) => asset.status === selectedStatus.value);
+    filtered = filtered.filter(
+      (asset) => asset.status === selectedStatus.value
+    );
   }
   return filtered;
 });
@@ -461,6 +493,16 @@ const statusOptions = computed(() => {
         td: { base: 'max-w-[0] truncate' },
       }"
     >
+      <!-- แสดงสถานะด้วย Badge -->
+      <template #status-data="{ row }">
+        <UBadge
+          size="xs"
+          :label="row.status"
+          :color="row.status === 'Active' ? 'emerald' : 'orange'"
+          variant="subtle"
+        />
+      </template>
+
       <!-- ปุ่มการกระทำสำหรับแต่ละแถว -->
       <template #actions-data="{ row }">
         <div class="flex gap-2">
