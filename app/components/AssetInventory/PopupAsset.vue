@@ -1,7 +1,6 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
-
-const isOpen = ref(false);
+import { ref, watch } from "vue";
+import { useAssetOptions } from "~/composables/assets/useAssetOptions";
 
 // กำหนด props ที่จะรับข้อมูลเข้ามา
 const props = defineProps({
@@ -22,18 +21,19 @@ const props = defineProps({
       brand: "",
       model: "",
       serialNumber: "",
-      location: "",
+      room: "",
       InstallationDate: "",
       warranty: "Yes",
       dateWarranty: "",
       expirationDate: "",
-      status: "Active",
+      status: "",
       ipAddress: "",
       macAddress: "",
       firmware: "",
       lastMaintenanceDate: "",
       maintenanceDate: "",
       organization: "",
+      location: "",
       building: "",
       floor: "",
       owner: "",
@@ -42,16 +42,83 @@ const props = defineProps({
   },
 });
 
+// การจัดการรูปภาพ
+const selectedImage = ref(null);
+const imagePreview = ref("");
+
+//ฟังก์ชันสำหรับจัดการการอัพโหลดรูปภาพ
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    selectedImage.value = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
 // กำหนดการส่งข้อมูลออกไป (emit events)
 const emit = defineEmits(["close", "save"]);
 
+//showAlert Validation
+const showAlert = ref(false);
+const alertMessage = ref("");
+
+//การ Validate ข้อมูล
+const validateForm = () => {
+  const requiredFields = [
+    "assetName",
+    "serialNumber",
+    "assetType",
+    "organization",
+  ];
+  const errors = [];
+
+  requiredFields.forEach((field) => {
+    if (!assetForm.value[field]) {
+      console.log(`Missing field: ${field}`);
+      errors.push(`, กรุณากรอก ${getFieldLabel(field)}`);
+    }
+  });
+
+  if (errors.length > 0) {
+    alertMessage.value = errors.join("\n");
+    showAlert.value = true;
+    return false;
+  }
+
+  return true;
+};
+
+onMounted(() => {
+  console.log(props.asset);
+});
+
+const getFieldLabel = (field) => {
+  const labels = {
+    assetName: "ชื่ออุปกรณ์",
+    serialNumber: "Serial Number",
+    assetType: "ประเภทอุปกรณ์",
+    organization: "องค์กร/หน่วยงาน",
+  };
+  return labels[field] || field;
+};
+
 // สร้าง ref สำหรับควบคุมสถานะของ Modal
 const isModalOpen = ref(props.isOpen);
-const assetForm = ref({ ...props.asset });
+const assetForm = ref({ ...props.asset, status: "Active" });
 
-// ฟังก์ชันสำหรับอัพเดทข้อมูลฟอร์มเมื่อมีการเปลี่ยนแปลงข้อมูลอุปกรณ์
+// ฟังก์ชันสำหรับอัพเดทข้อมูลฟอร์มเมื่อมีการเปลี่ยนแปลงข้อมูลอุปกรณ์แสดงรูปภาพที่มีอยู่แล้ว
 const updateAssetForm = (newAsset) => {
-  assetForm.value = { ...newAsset, status: newAsset.status || "Active" };
+  assetForm.value = {
+    ...newAsset,
+    status: props.mode === "add" ? "Active" : newAsset.status || "Active",
+  };
+  if (newAsset.image) {
+    imagePreview.value = newAsset.image;
+  }
 };
 
 // ตรวจสอบการเปลี่ยนแปลงของ props.isOpen เพื่อเปิด/ปิด Modal
@@ -60,28 +127,96 @@ watch(
   (newValue) => {
     isModalOpen.value = newValue;
     if (newValue && props.mode === "edit") {
-      updateAssetForm(props.assetForm);
+      updateAssetForm(props.asset);
     }
   }
 );
 
-// ฟังก์ชันสำหรับส่งข้อมูลเมื่อกดปุ่มบันทึก
+// เพิ่มฟังก์ชันสำหรับแปลง value เป็น label
+const getOptionLabel = (options, value) => {
+  if (!Array.isArray(options)) {
+    console.error("Expected options to be an array but got:", options);
+    return value; // คืนค่า value หาก options ไม่ถูกต้อง
+  }
+  const option = options.find((opt) => opt.value === value);
+  return option ? option.label : value;
+};
+
+// ฟังก์ชัน submitForm
 const submitForm = () => {
+  if (!validateForm()) return;
+
   const formData = { ...assetForm.value };
-  // แปลงค่า dropdown กลับเป็น string ถ้าจำเป็น
+
+  // แปลงค่า dropdown กลับเป็น label
   [
     "organization",
     "status",
     "assetType",
+    "assetGroup",
     "warranty",
     "owner",
     "building",
     "floor",
+    "room",
   ].forEach((field) => {
-    if (typeof formData[field] === "object" && formData[field] !== null) {
-      formData[field] = formData[field].value;
+    if (
+      typeof formData[field] === "object" &&
+      formData[field] !== null &&
+      formData[field] !== undefined
+    ) {
+      formData[field] = formData[field].label;
+    } else {
+      // ใช้ฟังก์ชัน getOptionLabel เพื่อแปลง value เป็น label
+      switch (field) {
+        case "organization":
+          formData[field] = getOptionLabel(
+            organizationOptions,
+            formData[field]
+          );
+          break;
+        case "status":
+          formData[field] = getOptionLabel(
+            statusOptions.value,
+            formData[field]
+          );
+          break;
+        case "assetType":
+          formData[field] = getOptionLabel(typeOptions.value, formData[field]);
+          break;
+        case "assetGroup":
+          formData[field] = getOptionLabel(groupOptions.value, formData[field]);
+          break;
+        case "warranty":
+          formData[field] = getOptionLabel(
+            warrantyOptions.value,
+            formData[field]
+          );
+          break;
+        case "owner":
+          formData[field] = getOptionLabel(ownerOptions.value, formData[field]);
+          break;
+        case "building":
+          formData[field] = getOptionLabel(
+            buildingOptions.value,
+            formData[field]
+          );
+          break;
+        case "floor":
+          formData[field] = getOptionLabel(floorOptions.value, formData[field]);
+          break;
+        case "room":
+          formData[field] = getOptionLabel(roomOptions.value, formData[field]);
+          break;
+      }
     }
   });
+
+  // เพิ่มข้อมูลรูปภาพ
+  if (selectedImage.value) {
+    formData.image = selectedImage.value;
+  }
+
   emit("save", formData);
 };
 
@@ -90,46 +225,18 @@ const closeModal = () => {
   emit("close");
 };
 
-const typeOptions = [
-  { value: "healthSmart", label: "Health Smart" },
-  { value: "healthRunning", label: "Health Running" },
-  { value: "healthCare", label: "Health Care" },
-  { value: "environmentSecsor", label: "environmentSecsor" },
-  { value: "emergency", label: "Emergency" },
-];
-
-const organizationOptions = [
-  { value: "ThaiPolice", label: "สำนักงานตำรวจแห่งชาติ" },
-  { value: "ThreePranAcademy", label: "โรงเรียนนายร้อยสามพราน" },
-];
-
-const statusOptions = [
-  { value: "Active", label: "Active" },
-  { value: "Inactive", label: "Inactive" },
-];
-
-const warrantyOptions = [
-  { value: "1", label: "Yes" },
-  { value: "0", label: "No" },
-];
-
-const ownerOptions = [
-  { value: "owner1", label: "เจ้าของ 1" },
-  { value: "owner2", label: "เจ้าของ 2" },
-  // เพิ่มตัวเลือกตามต้องการ
-];
-
-const buildingOptions = [
-  { value: "A", label: "อาคาร A" },
-  { value: "B", label: "อาคาร B" },
-  // เพิ่มตัวเลือกตามต้องการ
-];
-
-const floorOptions = [
-  { value: "1", label: "ชั้น 1" },
-  { value: "2", label: "ชั้น 2" },
-  // เพิ่มตัวเลือกตามต้องการ
-];
+// Mockup data
+const {
+  typeOptions,
+  organizationOptions,
+  statusOptions,
+  warrantyOptions,
+  ownerOptions,
+  buildingOptions,
+  floorOptions,
+  groupOptions,
+  roomOptions,
+} = useAssetOptions();
 </script>
 
 <template>
@@ -171,6 +278,17 @@ const floorOptions = [
         </div>
       </template>
 
+      <!--  ส่วนของการแจ้งเตือน -->
+      <UAlert
+        v-if="showAlert"
+        icon="i-heroicons-exclamation-triangle"
+        color="red"
+        variant="solid"
+        title="ข้อมูลไม่ครบถ้วน"
+        :description="alertMessage"
+        class="mb-4"
+      />
+
       <!-- ฟอร์มสำหรับกรอกข้อมูล -->
       <form @submit.prevent="submitForm">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
@@ -180,13 +298,13 @@ const floorOptions = [
             required
             class="col-span-1"
           >
-            <USelectMenu
+            <UInputMenu
               v-model="assetForm.organization"
               :options="organizationOptions"
             />
           </UFormGroup>
           <UFormGroup label="สถานะ" name="status" class="col-span-1">
-            <USelectMenu v-model="assetForm.status" :options="statusOptions" />
+            <UInputMenu v-model="assetForm.status" :options="statusOptions" />
           </UFormGroup>
         </div>
 
@@ -207,7 +325,14 @@ const floorOptions = [
             class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
           >
             <div class="text-center">
+              <img
+                v-if="imagePreview"
+                :src="imagePreview"
+                alt="Preview"
+                class="mx-auto h-32 w-32 object-cover mb-4"
+              />
               <svg
+                v-else
                 class="mx-auto h-12 w-12 text-gray-300"
                 viewBox="0 0 24 24"
                 fill="currentColor"
@@ -230,7 +355,8 @@ const floorOptions = [
                     name="file-upload"
                     type="file"
                     class="sr-only"
-                    model-value=""
+                    @change="handleImageUpload"
+                    accept="image/*"
                   />
                 </label>
                 <p class="pl-1">or drag and drop</p>
@@ -246,6 +372,19 @@ const floorOptions = [
           <!-- ใช้ grid สำหรับการจัดการฟอร์ม -->
           <UFormGroup label="รหัสอุปกรณ์">
             <UInput v-model="assetForm.assetID" placeholder="กรอกรหัสอุปกรณ์" />
+          </UFormGroup>
+          <UFormGroup
+            label="จัดกลุ่มอุปกรณ์"
+            name="assetGroup"
+            required
+            class="col-span-1"
+          >
+            <UInputMenu
+              placeholder="เลือกกลุ่มอุปกรณ์"
+              v-model="assetForm.assetGroup"
+              :options="groupOptions"
+              required
+            />
           </UFormGroup>
         </div>
 
@@ -263,10 +402,11 @@ const floorOptions = [
             required
             class="col-span-1"
           >
-            <USelectMenu
+            <UInputMenu
               placeholder="เลือกประเภทอุปกรณ์"
               v-model="assetForm.assetType"
               :options="typeOptions"
+              required
             />
           </UFormGroup>
           <UFormGroup label="แบรนด์">
@@ -303,7 +443,7 @@ const floorOptions = [
             />
           </UFormGroup>
           <UFormGroup label="Warranty" name="warranty" class="col-span-1">
-            <USelectMenu
+            <UInputMenu
               placeholder="Warranty"
               v-model="assetForm.warranty"
               :options="warrantyOptions"
@@ -334,7 +474,7 @@ const floorOptions = [
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
           <UFormGroup label="ชื่อ-สกุล" name="owner" class="col-span-1">
-            <USelectMenu
+            <UInputMenu
               placeholder="เลือกชื่อ-สกุล"
               v-model="assetForm.owner"
               :options="ownerOptions"
@@ -345,24 +485,31 @@ const floorOptions = [
             name="organization"
             class="col-span-1"
           >
-            <USelectMenu
+            <UInputMenu
               placeholder="เลือกองค์กร/หน่วยงาน"
               v-model="assetForm.organization"
               :options="organizationOptions"
             />
           </UFormGroup>
           <UFormGroup label="ตึก/อาคาร" name="building" class="col-span-1">
-            <USelectMenu
+            <UInputMenu
               placeholder="เลือกตึก/อาคาร"
               v-model="assetForm.building"
               :options="buildingOptions"
             />
           </UFormGroup>
           <UFormGroup label="ชั้น" name="floor" class="col-span-1">
-            <USelectMenu
+            <UInputMenu
               placeholder="เลือกชั้น"
               v-model="assetForm.floor"
               :options="floorOptions"
+            />
+          </UFormGroup>
+          <UFormGroup label="ห้อง" name="room" class="col-span-1">
+            <UInputMenu
+              placeholder="เลือกห้อง"
+              v-model="assetForm.room"
+              :options="roomOptions"
             />
           </UFormGroup>
         </div>
@@ -377,6 +524,17 @@ const floorOptions = [
           </UButton>
         </div>
       </form>
+
+      <!--  ส่วนของการแจ้งเตือน -->
+      <UAlert
+        v-if="showAlert"
+        icon="i-heroicons-exclamation-triangle"
+        color="red"
+        variant="solid"
+        title="ข้อมูลไม่ครบถ้วน"
+        :description="alertMessage"
+        class="mb-4 mt-4"
+      />
     </UCard>
   </UModal>
 </template>

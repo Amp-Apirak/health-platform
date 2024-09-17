@@ -1,210 +1,12 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import AssetModal from "~/components/AssetInventory/PopupAsset.vue";
+import DeletedModal from "~/components/DeletedModal.vue";
+import { useMockData } from "~/composables/assets/useMockData";
 
-/// ข้อมูลขององค์กรต่าง ๆ
-const assets = ref([
-  {
-    assetID: "A001",
-    assetName: "AI Tracker 1",
-    assetGroup: "G001",
-    assetType: "Health Sensor",
-    manufacturer: "GE Healthcare",
-    brand: "GE",
-    model: "LOGIQ E10",
-    serialNumber: "GE12345678",
-    location: "Room 101",
-    warranty: "3 years",
-    dateWarranty: "2023-01-15",
-    expirationDate: "2026-01-15",
-    status: "Active",
-    ipAddress: "192.168.1.10",
-    macAddress: "00:1A:2B:3C:4D:5E",
-    firmware: "v1.2.3",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Main Building",
-    building: "A",
-    floor: "1",
-    owner: "Radiology Department",
-    assetsImage: "image1.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-  {
-    assetID: "A002",
-    assetName: "AI Tracker 2",
-    assetGroup: "G001",
-    assetType: "Health Sensor",
-    manufacturer: "Siemens Healthineers",
-    brand: "Siemens",
-    model: "MAGNETOM Sola",
-    serialNumber: "SI67891234",
-    location: "Room 102",
-    warranty: "5 years",
-    dateWarranty: "2022-06-20",
-    expirationDate: "2027-06-20",
-    status: "Active",
-    ipAddress: "192.168.1.11",
-    macAddress: "00:1A:2B:3C:4D:5F",
-    firmware: "v2.1.0",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Main Building",
-    building: "B",
-    floor: "2",
-    owner: "Radiology Department",
-    assetsImage: "image2.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-  {
-    assetID: "A003",
-    assetName: "CT Scanner",
-    assetGroup: "G002",
-    assetType: "Health Sensor",
-    manufacturer: "Philips",
-    brand: "Philips",
-    model: "Ingenuity CT",
-    serialNumber: "PH34567891",
-    location: "Room 103",
-    warranty: "4 years",
-    dateWarranty: "2021-11-10",
-    expirationDate: "2025-11-10",
-    status: "Active",
-    ipAddress: "192.168.1.12",
-    macAddress: "00:1A:2B:3C:4D:60",
-    firmware: "v3.0.1",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Main Building",
-    building: "B",
-    floor: "2",
-    owner: "Radiology Department",
-    assetsImage: "image3.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-  {
-    assetID: "A004",
-    assetName: "X-Ray Machine",
-    assetGroup: "G002",
-    assetType: "Health Sensor",
-    manufacturer: "Canon Medical",
-    brand: "Canon",
-    model: "Radrex-i",
-    serialNumber: "CA09876543",
-    location: "Room 104",
-    warranty: "5 years",
-    dateWarranty: "2020-08-05",
-    expirationDate: "2025-08-05",
-    status: "Active",
-    ipAddress: "192.168.1.13",
-    macAddress: "00:1A:2B:3C:4D:61",
-    firmware: "v1.5.0",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Main Building",
-    building: "A",
-    floor: "1",
-    owner: "Radiology Department",
-    assetsImage: "image4.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-  {
-    assetID: "A005",
-    assetName: "Defibrillator",
-    assetGroup: "G003",
-    assetType: "Environment Sensor",
-    manufacturer: "Zoll",
-    brand: "Zoll",
-    model: "AED Plus",
-    serialNumber: "ZL12345009",
-    location: "Room 105",
-    warranty: "3 years",
-    dateWarranty: "2019-02-12",
-    expirationDate: "2022-02-12",
-    status: "Inactive",
-    ipAddress: "192.168.1.14",
-    macAddress: "00:1A:2B:3C:4D:62",
-    firmware: "v2.3.5",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Emergency Room",
-    building: "C",
-    floor: "1",
-    owner: "Emergency Department",
-    assetsImage: "image5.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-  {
-    assetID: "A006",
-    assetName: "Ventilator",
-    assetGroup: "G003",
-    assetType: "Environment Sensor",
-    manufacturer: "Dräger",
-    brand: "Dräger",
-    model: "Evita Infinity V500",
-    serialNumber: "DR56789012",
-    location: "ICU",
-    warranty: "5 years",
-    dateWarranty: "2021-03-18",
-    expirationDate: "2026-03-18",
-    status: "Active",
-    ipAddress: "192.168.1.15",
-    macAddress: "00:1A:2B:3C:4D:63",
-    firmware: "v1.9.7",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Main Building",
-    building: "C",
-    floor: "3",
-    owner: "Intensive Care Unit",
-    assetsImage: "image6.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-  {
-    assetID: "A007",
-    assetName: "Infusion Pump",
-    assetGroup: "G004",
-    assetType: "Environment Sensor",
-    manufacturer: "Baxter",
-    brand: "Baxter",
-    model: "Sigma Spectrum",
-    serialNumber: "BA10293847",
-    location: "Ward 3A",
-    warranty: "4 years",
-    dateWarranty: "2020-12-22",
-    expirationDate: "2024-12-22",
-    status: "Active",
-    ipAddress: "192.168.1.16",
-    macAddress: "00:1A:2B:3C:4D:64",
-    firmware: "v3.4.2",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Main Building",
-    building: "D",
-    floor: "3",
-    owner: "General Surgery Department",
-    assetsImage: "image7.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-  {
-    assetID: "A008",
-    assetName: "Ultrasound Machine",
-    assetGroup: "G005",
-    assetType: "Health Sensor",
-    manufacturer: "Hitachi",
-    brand: "Hitachi",
-    model: "ARIETTA 850",
-    serialNumber: "HT56781234",
-    location: "Room 106",
-    warranty: "4 years",
-    dateWarranty: "2022-01-10",
-    expirationDate: "2026-01-10",
-    status: "Active",
-    ipAddress: "192.168.1.17",
-    macAddress: "00:1A:2B:3C:4D:65",
-    firmware: "v2.0.0",
-    organization: "สำนักงานตำรวจแห่งชาติ",
-    location: "Main Building",
-    building: "D",
-    floor: "2",
-    owner: "Radiology Department",
-    assetsImage: "image8.jpg",
-    dateCreated: "21/08/2567 08.32",
-  },
-]);
+
+// Mockup data
+const { assets } = useMockData();
 
 // สถานะของ Modal
 const isAssetModalOpen = ref(false);
@@ -241,33 +43,50 @@ const closeAssetModal = () => {
   editingAsset.value = null;
 };
 
-// เพิ่มอุปกรณ์
+// แก้ไขฟังก์ชัน addAsset
 const addAsset = (newAsset) => {
   newAsset.assetID = `A${(assets.value.length + 1)
     .toString()
     .padStart(3, "0")}`;
-  newAsset.date = new Date().toLocaleDateString("th-TH", {
+  newAsset.dateCreated = new Date().toLocaleDateString("th-TH", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  // ถ้ามีรูปภาพ ให้แปลงเป็น URL
+  if (newAsset.image instanceof File) {
+    newAsset.image = URL.createObjectURL(newAsset.image);
+  }
+
+  // ตั้งค่า status เป็น "Active" ถ้าไม่ได้ระบุ
+  if (!newAsset.status) {
+    newAsset.status = "Active";
+  }
+
   assets.value.push(newAsset);
 };
-// แก้ไขข้อมูลอุปกรณ์
+
+// แก้ไขฟังก์ชัน editAsset
 const editAsset = (updatedAsset) => {
   const index = assets.value.findIndex(
     (asset) => asset.assetID === updatedAsset.assetID
   );
   if (index !== -1) {
-    assets.value[index] = updatedAsset;
-  }
-};
+    // ถ้ามีรูปภาพใหม่ ให้แปลงเป็น URL
+    if (updatedAsset.image instanceof File) {
+      updatedAsset.image = URL.createObjectURL(updatedAsset.image);
+    }
 
-// ลบอุปกรณ์
-const deleteAsset = (assetID) => {
-  assets.value = assets.value.filter((asset) => asset.assetID !== assetID);
+    // รักษาค่า status เดิมถ้าไม่ได้เปลี่ยนแปลง
+    if (!updatedAsset.status) {
+      updatedAsset.status = assets.value[index].status;
+    }
+
+    assets.value[index] = { ...assets.value[index], ...updatedAsset };
+  }
 };
 
 // กำหนดโครงสร้างของคอลัมน์ในตาราง
@@ -318,18 +137,29 @@ const filteredAssets = computed(() => {
       )
     );
   }
-  if (selectedType.value !== "All") {
+  if (selectedType.value && selectedType.value !== "All") {
     filtered = filtered.filter(
-      (asset) => asset.assetType === selectedType.value
+      (asset) =>
+        asset.assetType === (selectedType.value.value || selectedType.value)
     );
   }
-  if (selectedStatus.value !== "All") {
+  if (selectedStatus.value && selectedStatus.value !== "All") {
     filtered = filtered.filter(
-      (asset) => asset.status === selectedStatus.value
+      (asset) =>
+        asset.status === (selectedStatus.value.value || selectedStatus.value)
     );
   }
   return filtered;
 });
+
+// ปรับปรุงฟังก์ชัน resetFilters
+const resetFilters = () => {
+  search.value = "";
+  selectedType.value = "All";
+  selectedStatus.value = "All";
+  selectedColumns.value = columns;
+  pageCount.value = 10;
+};
 
 // จัดเรียงข้อมูลตามคอลัมน์ที่เลือก
 const sortedAssets = computed(() => {
@@ -350,15 +180,6 @@ const paginatedAssets = computed(() => {
   const end = start + pageCount.value;
   return sortedAssets.value.slice(start, end);
 });
-
-// รีเซ็ตตัวกรองทั้งหมด
-const resetFilters = () => {
-  search.value = "";
-  selectedType.value = "All";
-  selectedStatus.value = "All";
-  selectedColumns.value = columns;
-  pageCount.value = 10;
-};
 
 // อัพเดทหน้าปัจจุบันเมื่อข้อมูลที่กรองเปลี่ยนแปลง
 watch(filteredAssets, () => {
@@ -382,9 +203,36 @@ const statusOptions = computed(() => {
     ...Array.from(statuses).map((status) => ({ label: status, value: status })),
   ];
 });
+
+// ลบอุปกรณ์
+const isDeleteModalOpen = ref(false);
+const assetToDelete = ref(null);
+
+//ฟังก์ชัน deleteAsset
+const deleteAsset = (asset) => {
+  assetToDelete.value = asset;
+  isDeleteModalOpen.value = true;
+};
+
+//ฟังก์ชัน confirmDelete
+const confirmDelete = () => {
+  if (assetToDelete.value) {
+    assets.value = assets.value.filter(
+      (asset) => asset.assetID !== assetToDelete.value.assetID
+    );
+    isDeleteModalOpen.value = false;
+    assetToDelete.value = null;
+  }
+};
 </script>
 
 <template>
+  <DeletedModal
+    v-model="isDeleteModalOpen"
+    :asset-name="assetToDelete?.assetName"
+    @confirm="confirmDelete"
+    @cancel="isDeleteModalOpen = false"
+  />
   <UCard
     class="w-full"
     :ui="{
@@ -430,13 +278,13 @@ const statusOptions = computed(() => {
         class="w-full sm:w-80 mb-3 sm:mb-0"
       />
       <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-        <USelect
+        <UInputMenu
           v-model="selectedType"
           :options="typeOptions"
           placeholder="ประเภทอุปกรณ์"
           class="w-full sm:w-40"
         />
-        <USelect
+        <UInputMenu
           v-model="selectedStatus"
           :options="statusOptions"
           placeholder="สถานะ"
@@ -458,7 +306,12 @@ const statusOptions = computed(() => {
 
       <div class="flex gap-1.5 items-center">
         <USelectMenu v-model="selectedColumns" :options="columns" multiple>
-          <UButton icon="i-heroicons-view-columns" color="gray" size="xs">
+          <UButton
+            icon="i-heroicons-view-columns"
+            color="gray"
+            size="xs"
+            class="w-40"
+          >
             Columns
           </UButton>
         </USelectMenu>
@@ -522,7 +375,7 @@ const statusOptions = computed(() => {
             variant="ghost"
             :ui="{ rounded: 'rounded-full' }"
             square
-            @click="deleteAsset(row.assetID)"
+            @click="deleteAsset(row)"
           />
         </div>
       </template>
