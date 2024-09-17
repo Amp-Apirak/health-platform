@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-import { useAssetOptions } from "~/composables/assets/useAssetOptions";
+import { useAssetOptions } from "~/composables/assets/comonents/useAssetOptions";
 
 // กำหนด props ที่จะรับข้อมูลเข้ามา
 const props = defineProps({

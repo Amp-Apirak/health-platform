@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import AssetModal from "~/components/AssetInventory/PopupAsset.vue";
 import DeletedModal from "~/components/DeletedModal.vue";
-import { useMockData } from "~/composables/assets/useMockData";
+import { useMockData } from "~/composables/assets/pages/useMockData";
 
 
 // Mockup data
