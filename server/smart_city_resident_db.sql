@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 02, 2024 at 05:54 PM
+-- Generation Time: Oct 03, 2024 at 03:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -331,6 +331,32 @@ CREATE TABLE `skills` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'วันที่อัปเดตข้อมูลล่าสุด'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ตารางเก็บข้อมูลทักษะและความสามารถพิเศษของประชาชน';
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vaccinations`
+--
+
+CREATE TABLE `vaccinations` (
+  `id` varchar(36) NOT NULL COMMENT 'รหัสการฉีดวัคซีน (UUID)',
+  `citizen_id` varchar(36) NOT NULL COMMENT 'รหัสประชาชน (เชื่อมโยงกับตาราง citizens)',
+  `vaccine_name` varchar(100) NOT NULL COMMENT 'ชื่อวัคซีน',
+  `vaccine_type` varchar(50) DEFAULT NULL COMMENT 'ประเภทวัคซีน (เช่น mRNA, เชื้อตาย)',
+  `manufacturer` varchar(100) DEFAULT NULL COMMENT 'บริษัทผู้ผลิตวัคซีน',
+  `dose_number` int(11) NOT NULL COMMENT 'เข็มที่',
+  `vaccination_date` date NOT NULL COMMENT 'วันที่ฉีดวัคซีน',
+  `lot_number` varchar(50) DEFAULT NULL COMMENT 'หมายเลขล็อตวัคซีน',
+  `vaccination_site` varchar(200) DEFAULT NULL COMMENT 'สถานที่ฉีดวัคซีน',
+  `healthcare_provider` varchar(200) DEFAULT NULL COMMENT 'ผู้ให้บริการฉีดวัคซีน',
+  `next_dose_date` date DEFAULT NULL COMMENT 'วันนัดฉีดครั้งถัดไป (ถ้ามี)',
+  `side_effects` text DEFAULT NULL COMMENT 'ผลข้างเคียงที่พบ (ถ้ามี)',
+  `vaccination_certificate_no` varchar(50) DEFAULT NULL COMMENT 'เลขที่ใบรับรองการฉีดวัคซีน',
+  `vaccination_status` enum('ฉีดครบ','รอฉีดเข็มถัดไป','ยังไม่ครบตามกำหนด') NOT NULL COMMENT 'สถานะการฉีดวัคซีน',
+  `notes` text DEFAULT NULL COMMENT 'หมายเหตุเพิ่มเติม',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'วันที่สร้างข้อมูล',
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'วันที่อัปเดตข้อมูลล่าสุด'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ตารางเก็บข้อมูลการฉีดวัคซีนของประชาชน';
+
 --
 -- Indexes for dumped tables
 --
@@ -455,6 +481,13 @@ ALTER TABLE `skills`
   ADD KEY `citizen_id` (`citizen_id`);
 
 --
+-- Indexes for table `vaccinations`
+--
+ALTER TABLE `vaccinations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `citizen_id` (`citizen_id`);
+
+--
 -- Constraints for dumped tables
 --
 
@@ -552,6 +585,12 @@ ALTER TABLE `residency_history`
 --
 ALTER TABLE `skills`
   ADD CONSTRAINT `skills_ibfk_1` FOREIGN KEY (`citizen_id`) REFERENCES `citizens` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `vaccinations`
+--
+ALTER TABLE `vaccinations`
+  ADD CONSTRAINT `vaccinations_ibfk_1` FOREIGN KEY (`citizen_id`) REFERENCES `citizens` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
